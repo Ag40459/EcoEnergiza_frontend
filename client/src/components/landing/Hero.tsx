@@ -23,7 +23,11 @@ const coresGradiente = [
   "linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 50%, #e0f2f1 100%)",
 ];
 
-export default function Hero() {
+interface HeroProps {
+  onStart: () => void;
+}
+
+export default function Hero({ onStart }: HeroProps) {
   const { displayedText } = useTypewriter({
     messages: mensagens,
     typingSpeed: 55,
@@ -81,7 +85,8 @@ export default function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="hidden lg:flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-white shadow-lg transition-all"
+              onClick={onStart}
+              className="hidden lg:flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-white shadow-lg transition-all border-none cursor-pointer"
               style={{ 
                 backgroundColor: "#009865",
                 boxShadow: "0 10px 25px -5px rgba(0, 152, 101, 0.4)"

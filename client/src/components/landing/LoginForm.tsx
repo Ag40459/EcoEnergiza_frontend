@@ -5,11 +5,12 @@ import { ArrowRight, X, Lock, Mail } from "lucide-react";
 interface LoginFormProps {
   isMobile?: boolean;
   onClose?: () => void;
+  initialStep?: "email" | "code" | "other";
 }
 
-export default function LoginForm({ isMobile = false, onClose }: LoginFormProps) {
+export default function LoginForm({ isMobile = false, onClose, initialStep = "email" }: LoginFormProps) {
   const [email, setEmail] = useState("");
-  const [step, setStep] = useState<"email" | "code" | "other">("email");
+  const [step, setStep] = useState<"email" | "code" | "other">(initialStep);
   const [code, setCode] = useState(["", "", "", ""]);
   
   // Estados para o formulário "Acesse de outra forma"
@@ -46,11 +47,10 @@ export default function LoginForm({ isMobile = false, onClose }: LoginFormProps)
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-sm"
     >
-      {!isMobile && (
-        <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold" style={{ color: "#004e3a" }}>Acesse sua conta</h2>
-        </div>
-      )}
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-bold" style={{ color: "#004e3a" }}>Acesse sua conta</h2>
+        <p className="text-sm opacity-70 mt-2">Insira seu e-mail para receber o código de acesso</p>
+      </div>
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <input
           type="email"
@@ -113,6 +113,13 @@ export default function LoginForm({ isMobile = false, onClose }: LoginFormProps)
         style={{ backgroundColor: code.join("").length === 4 ? "#009865" : "#cccccc" }}
       >
         Confirmar Acesso
+      </button>
+      <button 
+        onClick={() => setStep("email")}
+        className="mt-4 text-xs font-bold underline block w-full text-center" 
+        style={{ color: "#009865" }}
+      >
+        Voltar para o e-mail
       </button>
     </motion.div>
   );

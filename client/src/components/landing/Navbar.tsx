@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, X, Menu, Sun, Gauge, TreePine, ChevronRight } from "lucide-react";
-import LoginForm from "./LoginForm";
+import { X, Menu, Sun, Gauge, TreePine, ChevronRight } from "lucide-react";
 
 const solucoes = [
   {
@@ -24,10 +23,13 @@ const solucoes = [
   },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenLogin: () => void;
+}
+
+export default function Navbar({ onOpenLogin }: NavbarProps) {
   const [menuAberto, setMenuAberto] = useState(false);
   const [solucoesAberto, setSolucoesAberto] = useState(false);
-  const [loginAberto, setLoginAberto] = useState(false);
 
   return (
     <>
@@ -36,12 +38,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           <a href="/" className="flex items-center gap-2 no-underline">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#009865" }}>
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight" style={{ color: "#004e3a" }}>
-              EcoEnergiza
-            </span>
+            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-12 w-auto" />
           </a>
 
           <div className="hidden md:flex items-center gap-10">
@@ -51,17 +48,8 @@ export default function Navbar() {
             <a href="#contato" className="text-sm font-semibold no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Contato</a>
           </div>
 
-          <div className="hidden md:block">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setLoginAberto(true)}
-              className="px-8 py-2.5 rounded-full text-sm font-bold text-white border-none cursor-pointer shadow-sm"
-              style={{ backgroundColor: "#009865" }}
-            >
-              Acessar
-            </motion.button>
-          </div>
+          {/* Botão Acessar removido do desktop conforme solicitado */}
+          <div className="hidden md:block w-[120px]"></div>
 
           <button onClick={() => setMenuAberto(!menuAberto)} className="md:hidden bg-transparent border-none p-2 cursor-pointer" style={{ color: "#004e3a" }}>
             {menuAberto ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -76,7 +64,7 @@ export default function Navbar() {
                 <button onClick={() => { setSolucoesAberto(true); setMenuAberto(false); }} className="text-lg font-bold text-left bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Soluções</button>
                 <a href="#sobre" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Sobre</a>
                 <a href="#contato" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Contato</a>
-                <button onClick={() => { setLoginAberto(true); setMenuAberto(false); }} className="mt-4 px-6 py-4 rounded-2xl text-lg font-bold text-white border-none w-full shadow-lg" style={{ backgroundColor: "#009865" }}>Acessar Conta</button>
+                <button onClick={() => { onOpenLogin(); setMenuAberto(false); }} className="mt-4 px-6 py-4 rounded-2xl text-lg font-bold text-white border-none w-full shadow-lg" style={{ backgroundColor: "#009865" }}>Acessar Conta</button>
               </div>
             </motion.div>
           )}
@@ -108,13 +96,6 @@ export default function Navbar() {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Modal de Login (Desktop e Mobile) */}
-      <AnimatePresence>
-        {loginAberto && (
-          <LoginForm onClose={() => setLoginAberto(false)} />
         )}
       </AnimatePresence>
     </>
