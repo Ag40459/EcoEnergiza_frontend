@@ -18,12 +18,11 @@ export default function Home() {
       <Navbar onOpenLogin={() => abrirLogin("email")} />
       
       <div className="flex-1 flex flex-col lg:flex-row pt-20 lg:pt-0 overflow-hidden">
-        <div className="h-[55vh] lg:h-full lg:flex-1 overflow-hidden">
+        <div className="h-[40vh] lg:h-full lg:flex-1 overflow-hidden">
           <Hero onStart={() => abrirLogin("email")} />
         </div>
         
-        {/* LoginForm visível apenas no Mobile - Apenas passo de email inicial */}
-        <div className="h-[45vh] lg:hidden w-full bg-white border-t border-gray-100 px-6 flex items-center justify-center overflow-hidden">
+        <div className="h-[60vh] lg:hidden w-full bg-white border-t border-gray-100 px-6 flex items-center justify-center overflow-hidden">
           <LoginForm 
             isMobile={true} 
             onOpenOther={() => abrirLogin("other")}

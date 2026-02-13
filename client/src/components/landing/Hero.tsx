@@ -4,16 +4,13 @@ import { useTypewriter } from "@/hooks/useTypewriter";
 import { ArrowRight } from "lucide-react";
 
 const mensagens = [
-  "Sua energia digital, onde você estiver.",
-  "Economize até 100% na sua conta de luz.",
-  "Monitore seu consumo em tempo real.",
-  "Gestão inteligente para sua economia.",
-  "Sua usina solar na palma da mão.",
-  "Ganhe EcoCoins e troque por benefícios.",
-  "Tecnologia inteligente para eficiência energética.",
-  "Reduza seu impacto ambiental com energia limpa.",
-  "Torne-se um consultor e ganhe comissões.",
-  "Desconto na conta sem instalar nada.",
+  "Bem-vindo à EcoEnergiza!",
+  "Para acessar a plataforma, basta inserir seu e-mail.",
+  "Quer economizar até 100% na conta de energia?",
+  "Sem surpresas na sua conta de luz.",
+  "Seja membro da nossa comunidade, é grátis!",
+  "Faça a gestão inteligente do seu consumo.",
+  "Ajudamos cidades e pessoas a serem sustentáveis.",
 ];
 
 const coresGradiente = [
@@ -61,8 +58,7 @@ export default function Hero({ onStart }: HeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Altura fixa para evitar pulos de layout */}
-            <div className="h-[140px] md:h-[180px] lg:h-[220px] mb-6 flex items-start">
+            <div className="h-[180px] md:h-[220px] lg:h-[260px] mb-6 flex items-start">
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1]"
                 style={{ color: "#004e3a" }}
@@ -74,13 +70,6 @@ export default function Hero({ onStart }: HeroProps) {
                 />
               </h1>
             </div>
-
-            <p
-              className="text-base md:text-lg lg:text-xl mb-10 max-w-lg leading-relaxed opacity-90"
-              style={{ color: "#006044" }}
-            >
-              Soluções sustentáveis para monitoramento e gestão do seu consumo de energia.
-            </p>
 
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -98,7 +87,6 @@ export default function Hero({ onStart }: HeroProps) {
           </motion.div>
         </div>
 
-        {/* Mockup do Celular visível no Desktop */}
         <div className="hidden lg:block flex-1 relative">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}

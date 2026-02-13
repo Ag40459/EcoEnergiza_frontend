@@ -38,7 +38,7 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           <a href="/" className="flex items-center gap-2 no-underline">
-            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-16 md:h-20 lg:h-24 w-auto object-contain transition-all" />
+            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-20 md:h-24 lg:h-32 w-auto object-contain transition-all" />
           </a>
 
           <div className="hidden md:flex items-center gap-10">
@@ -48,7 +48,6 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
             <a href="#contato" className="text-sm font-semibold no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Contato</a>
           </div>
 
-          {/* Botão Acessar removido do desktop conforme solicitado */}
           <div className="hidden md:block w-[120px]"></div>
 
           <button onClick={() => setMenuAberto(!menuAberto)} className="md:hidden bg-transparent border-none p-2 cursor-pointer" style={{ color: "#004e3a" }}>
@@ -71,7 +70,6 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
         </AnimatePresence>
       </nav>
 
-      {/* Modal de Soluções */}
       <AnimatePresence>
         {solucoesAberto && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setSolucoesAberto(false)}>
