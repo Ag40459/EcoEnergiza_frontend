@@ -1,98 +1,111 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Sun, Gauge, TreePine, Award, Sparkles, ShieldCheck } from "lucide-react";
-import { ContentModal, ContactModal } from "../modals/ContentModals";
-
-const solucoesData = [
-  {
-    titulo: "Economize até 100%",
-    descricao: "Gere sua própria energia solar e reduza sua conta de luz.",
-    descricaoLonga: "Através das nossas usinas remotas, você gera sua própria energia limpa sem precisar de telhado. O sistema é monitorado por IA para garantir a máxima eficiência e economia.",
-    icone: Sun,
-    imagens: ["/assets/solucao1_1.jpg", "/assets/solucao1_2.jpg"],
-    link: "https://ecoenergiza.com.br/usinas"
-  },
-  {
-    titulo: "Desconto na Conta",
-    descricao: "Receba descontos diretos sem instalação.",
-    descricaoLonga: "Ideal para quem mora de aluguel ou não tem espaço. Você se associa a uma de nossas usinas e recebe os créditos diretamente na sua fatura da concessionária.",
-    icone: Gauge,
-    imagens: ["/assets/solucao2_1.jpg"],
-    link: "https://ecoenergiza.com.br/descontos"
-  }
-];
-
-const sobreData = [
-  {
-    titulo: "Nossa Missão",
-    descricao: "Digitalizar o acesso à energia limpa.",
-    descricaoLonga: "A EcoEnergiza nasceu com o propósito de democratizar o acesso à energia sustentável através da tecnologia e inteligência artificial, criando um ecossistema transparente e eficiente.",
-    icone: Sparkles,
-    imagens: ["/assets/sobre1.jpg"]
-  },
-  {
-    titulo: "Segurança e Tecnologia",
-    descricao: "Monitoramento 24/7 com IA.",
-    descricaoLonga: "Utilizamos as tecnologias mais modernas de IoT e IA para garantir que cada kWh gerado seja aproveitado ao máximo, trazendo segurança e previsibilidade para nossos associados.",
-    icone: ShieldCheck,
-    imagens: ["/assets/sobre2.jpg"]
-  }
-];
+import React, { useState, useEffect } from 'react';
+import { Menu, X, ChevronRight, Sun, Moon, Zap, Shield, TrendingUp, Cpu, Globe, Users, Heart, Award } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ContentModal, ContactModal } from '../modals/ContentModals';
 
 interface NavbarProps {
   onOpenLogin: () => void;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
-export default function Navbar({ onOpenLogin }: NavbarProps) {
+export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps) {
   const [menuAberto, setMenuAberto] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [modalSolucoes, setModalSolucoes] = useState(false);
   const [modalSobre, setModalSobre] = useState(false);
   const [modalContato, setModalContato] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const solucoesData = [
+    { 
+      titulo: "Usina Remota", 
+      dor: "Não tenho espaço para painéis solares no meu telhado ou moro em apartamento.",
+      icone: Zap,
+      descricaoLonga: "Nossa solução de Usina Remota permite que você gere sua própria energia em nossas fazendas solares e receba os créditos diretamente na sua conta de luz, sem precisar instalar nada na sua residência.",
+      beneficios: ["Sem instalação no telhado", "Ideal para apartamentos", "Economia imediata", "Gestão via App"],
+      imagens: ["https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800"]
+    },
+    { 
+      titulo: "Smart Metering", 
+      dor: "Minha conta de luz é uma surpresa todo mês e não sei onde estou gastando mais.",
+      icone: Cpu,
+      descricaoLonga: "Com o nosso Smart Meter, você acompanha seu consumo em tempo real, identifica aparelhos 'vilões' e recebe alertas inteligentes para economizar antes mesmo da conta chegar.",
+      beneficios: ["Monitoramento Real-time", "Alertas de Consumo", "Identificação de Aparelhos", "Fácil Instalação"],
+      imagens: ["https://images.unsplash.com/photo-1558444479-c8f02e622c6a?q=80&w=800"]
+    },
+    { 
+      titulo: "Créditos de Carbono", 
+      dor: "Quero ajudar o planeta mas não sei como monetizar minhas ações sustentáveis.",
+      icone: Globe,
+      descricaoLonga: "Transformamos sua geração de energia limpa em ativos digitais e créditos de carbono que podem ser negociados ou usados para abater custos, incentivando a sustentabilidade lucrativa.",
+      beneficios: ["Monetização Sustentável", "Ativos Digitais", "Impacto Ambiental Positivo", "Transparência Blockchain"],
+      imagens: ["https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800"]
+    }
+  ];
+
+  const sobreData = [
+    { 
+      titulo: "Nossa Missão", 
+      dor: "O sistema elétrico atual é arcaico, centralizado e pouco transparente.",
+      icone: Heart,
+      descricaoLonga: "Nascemos para democratizar o acesso à energia inteligente. Nossa missão é colocar o controle do ecossistema energético nas mãos do consumidor através de tecnologia de ponta e IA.",
+      beneficios: ["Transparência", "Democratização", "Inovação Constante", "Foco no Cliente"],
+      imagens: ["https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=800"]
+    },
+    { 
+      titulo: "Tecnologia Ecolote", 
+      dor: "Como confiar que os dados de geração e economia são reais?",
+      icone: Shield,
+      descricaoLonga: "Utilizamos uma infraestrutura robusta de microserviços, Kafka e processamento em tempo real para garantir que cada watt gerado e cada centavo economizado seja auditável e preciso.",
+      beneficios: ["Dados em Tempo Real", "Segurança Bancária", "Escalabilidade", "Precisão Absoluta"],
+      imagens: ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800"]
+    }
+  ];
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b border-gray-100 bg-white">
+      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-2' : 'bg-white dark:bg-gray-900 py-4'} border-gray-100 dark:border-gray-800`}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
-          <a href="/" className="flex items-center no-underline">
+          <a href="/" className="flex items-center no-underline shrink-0">
             <img src="/assets/logo.png" alt="EcoEnergiza" className="h-28 md:h-36 lg:h-44 w-auto object-contain transition-all" style={{ marginTop: "10px" }} />
           </a>
 
-          <div className="hidden md:flex items-center gap-10">
-            {scrolled && (
-              <motion.a initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} href="#inicio" className="text-sm font-black no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Início</motion.a>
-            )}
-            <button onClick={() => setModalSolucoes(true)} className="text-sm font-black hover:opacity-60 bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Soluções</button>
-            <button onClick={() => setModalSobre(true)} className="text-sm font-black hover:opacity-60 bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Sobre</button>
-            <button onClick={() => setModalContato(true)} className="text-sm font-black hover:opacity-60 bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Contato</button>
+          <div className="hidden lg:flex items-center gap-10">
+            <button onClick={() => setModalSolucoes(true)} className="text-sm font-black text-[#004e3a] dark:text-gray-300 hover:text-[#009865] uppercase tracking-widest transition-colors">Soluções</button>
+            <button onClick={() => setModalSobre(true)} className="text-sm font-black text-[#004e3a] dark:text-gray-300 hover:text-[#009865] uppercase tracking-widest transition-colors">Sobre</button>
+            <button onClick={() => setModalContato(true)} className="text-sm font-black text-[#004e3a] dark:text-gray-300 hover:text-[#009865] uppercase tracking-widest transition-colors">Contato</button>
           </div>
 
-          <div className="hidden md:block w-[120px]"></div>
-
-          <button onClick={() => setMenuAberto(!menuAberto)} className="md:hidden bg-transparent border-none p-2 cursor-pointer relative z-[110]" style={{ color: "#004e3a" }}>
-            <div className="w-6 h-6 flex items-center justify-center relative">
-              <motion.div animate={menuAberto ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }} className="absolute w-6 h-0.5 bg-current" />
-              <motion.div animate={menuAberto ? { opacity: 0 } : { opacity: 1 }} className="absolute w-6 h-0.5 bg-current" />
-              <motion.div animate={menuAberto ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }} className="absolute w-6 h-0.5 bg-current" />
-            </div>
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              {theme === 'light' ? <Moon className="w-5 h-5 text-gray-600" /> : <Sun className="w-5 h-5 text-yellow-400" />}
+            </button>
+            <button 
+              onClick={onOpenLogin}
+              className="hidden md:block px-8 py-3 bg-[#004e3a] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-900/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              Acessar Conta
+            </button>
+            <button onClick={() => setMenuAberto(!menuAberto)} className="lg:hidden p-2 text-[#004e3a] dark:text-white">
+              {menuAberto ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
 
         <AnimatePresence>
           {menuAberto && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="md:hidden bg-white shadow-xl border-t border-gray-100">
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="lg:hidden bg-white dark:bg-gray-900 shadow-xl border-t border-gray-100 dark:border-gray-800">
               <div className="px-6 py-8 flex flex-col gap-6">
-                {scrolled && <a href="#inicio" className="text-lg font-black no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Início</a>}
-                <button onClick={() => { setModalSolucoes(true); setMenuAberto(false); }} className="text-lg font-black text-left bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Soluções</button>
-                <button onClick={() => { setModalSobre(true); setMenuAberto(false); }} className="text-lg font-black text-left bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Sobre</button>
-                <button onClick={() => { setModalContato(true); setMenuAberto(false); }} className="text-lg font-black text-left bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Contato</button>
-                <button onClick={() => { onOpenLogin(); setMenuAberto(false); }} className="mt-4 px-6 py-4 rounded-2xl text-lg font-black text-white border-none w-full shadow-lg" style={{ backgroundColor: "#009865" }}>Acessar Conta</button>
+                <button onClick={() => { setModalSolucoes(true); setMenuAberto(false); }} className="text-lg font-black text-left text-[#004e3a] dark:text-white uppercase tracking-widest">Soluções</button>
+                <button onClick={() => { setModalSobre(true); setMenuAberto(false); }} className="text-lg font-black text-left text-[#004e3a] dark:text-white uppercase tracking-widest">Sobre</button>
+                <button onClick={() => { setModalContato(true); setMenuAberto(false); }} className="text-lg font-black text-left text-[#004e3a] dark:text-white uppercase tracking-widest">Contato</button>
+                <button onClick={() => { onOpenLogin(); setMenuAberto(false); }} className="mt-4 px-6 py-4 rounded-2xl text-lg font-black text-white bg-[#009865] shadow-lg">Acessar Conta</button>
               </div>
             </motion.div>
           )}
@@ -101,7 +114,7 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
 
       <ContentModal isOpen={modalSolucoes} onClose={() => setModalSolucoes(false)} title="Nossas Soluções" items={solucoesData} />
       <ContentModal isOpen={modalSobre} onClose={() => setModalSobre(false)} title="Sobre a EcoEnergiza" items={sobreData} />
-      <ContactModal isOpen={modalContato} onClose={() => setModalContato(false)} />
+      <ContactModal isOpen={modalContato} onClose={() => setContactOpen(true)} />
     </>
   );
 }
