@@ -70,7 +70,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 border-b ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-2' : 'bg-white dark:bg-gray-900 py-4'} border-gray-100 dark:border-gray-800`}>
+      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 rounded-b-[2.5rem] ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-2' : 'bg-white dark:bg-gray-900 py-4'} border-b border-gray-100 dark:border-gray-800`}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           <a href="/" className="flex items-center no-underline shrink-0">
             <img src="/assets/logo.png" alt="EcoEnergiza" className="h-28 md:h-36 lg:h-44 w-auto object-contain transition-all" style={{ marginTop: "10px" }} />
@@ -100,7 +100,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
 
         <AnimatePresence>
           {menuAberto && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="lg:hidden bg-white dark:bg-gray-900 shadow-xl border-t border-gray-100 dark:border-gray-800">
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="lg:hidden bg-white dark:bg-gray-900 shadow-xl border-t border-gray-100 dark:border-gray-800 rounded-b-[2rem]">
               <div className="px-6 py-8 flex flex-col gap-6">
                 <button onClick={() => { setModalSolucoes(true); setMenuAberto(false); }} className="text-lg font-black text-left text-[#004e3a] dark:text-white uppercase tracking-widest">Soluções</button>
                 <button onClick={() => { setModalSobre(true); setMenuAberto(false); }} className="text-lg font-black text-left text-[#004e3a] dark:text-white uppercase tracking-widest">Sobre</button>
