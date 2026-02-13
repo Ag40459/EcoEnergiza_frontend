@@ -38,7 +38,7 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           <a href="/" className="flex items-center gap-2 no-underline">
-            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-[3.6rem] w-auto" />
+            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-16 md:h-20 lg:h-24 w-auto object-contain transition-all" />
           </a>
 
           <div className="hidden md:flex items-center gap-10">
