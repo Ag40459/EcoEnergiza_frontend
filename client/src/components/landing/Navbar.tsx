@@ -37,35 +37,35 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={{ backgroundColor: "rgba(232, 245, 233, 0.85)", backdropFilter: "blur(12px)" }}
+        style={{ backgroundColor: "rgba(255, 255, 255, 0.7)", backdropFilter: "blur(10px)" }}
       >
-        <div className="container flex items-center justify-between h-16 lg:h-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 no-underline">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#009865" }}>
               <Zap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold" style={{ color: "#004e3a" }}>
+            <span className="text-xl font-bold tracking-tight" style={{ color: "#004e3a" }}>
               EcoEnergiza
             </span>
           </a>
 
           {/* Menu Desktop */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#inicio" className="text-sm font-medium no-underline transition-colors hover:opacity-70" style={{ color: "#004e3a" }}>
+          <div className="hidden md:flex items-center gap-10">
+            <a href="#inicio" className="text-sm font-semibold no-underline transition-opacity hover:opacity-60" style={{ color: "#004e3a" }}>
               Início
             </a>
             <button
               onClick={() => setSolucoesAberto(true)}
-              className="text-sm font-medium transition-colors hover:opacity-70 bg-transparent border-none"
+              className="text-sm font-semibold transition-opacity hover:opacity-60 bg-transparent border-none cursor-pointer"
               style={{ color: "#004e3a" }}
             >
               Soluções
             </button>
-            <a href="#sobre" className="text-sm font-medium no-underline transition-colors hover:opacity-70" style={{ color: "#004e3a" }}>
+            <a href="#sobre" className="text-sm font-semibold no-underline transition-opacity hover:opacity-60" style={{ color: "#004e3a" }}>
               Sobre
             </a>
-            <a href="#contato" className="text-sm font-medium no-underline transition-colors hover:opacity-70" style={{ color: "#004e3a" }}>
+            <a href="#contato" className="text-sm font-semibold no-underline transition-opacity hover:opacity-60" style={{ color: "#004e3a" }}>
               Contato
             </a>
           </div>
@@ -73,9 +73,9 @@ export default function Navbar() {
           {/* Botão Acessar Desktop */}
           <div className="hidden md:block">
             <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white border-none"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-2.5 rounded-full text-sm font-bold text-white border-none cursor-pointer shadow-sm"
               style={{ backgroundColor: "#009865" }}
             >
               Acessar
@@ -85,7 +85,7 @@ export default function Navbar() {
           {/* Hamburger Mobile */}
           <button
             onClick={() => setMenuAberto(!menuAberto)}
-            className="md:hidden bg-transparent border-none p-2"
+            className="md:hidden bg-transparent border-none p-2 cursor-pointer"
             style={{ color: "#004e3a" }}
           >
             {menuAberto ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -96,38 +96,37 @@ export default function Navbar() {
         <AnimatePresence>
           {menuAberto && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden"
-              style={{ backgroundColor: "rgba(232, 245, 233, 0.95)" }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden overflow-hidden bg-white shadow-xl border-t border-gray-100"
             >
-              <div className="container py-4 flex flex-col gap-4">
-                <a href="#inicio" className="text-sm font-medium no-underline py-2" style={{ color: "#004e3a" }}
+              <div className="px-6 py-8 flex flex-col gap-6">
+                <a href="#inicio" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }}
                   onClick={() => setMenuAberto(false)}>
                   Início
                 </a>
                 <button
                   onClick={() => { setSolucoesAberto(true); setMenuAberto(false); }}
-                  className="text-sm font-medium text-left bg-transparent border-none py-2"
+                  className="text-lg font-bold text-left bg-transparent border-none cursor-pointer"
                   style={{ color: "#004e3a" }}
                 >
                   Soluções
                 </button>
-                <a href="#sobre" className="text-sm font-medium no-underline py-2" style={{ color: "#004e3a" }}
+                <a href="#sobre" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }}
                   onClick={() => setMenuAberto(false)}>
                   Sobre
                 </a>
-                <a href="#contato" className="text-sm font-medium no-underline py-2" style={{ color: "#004e3a" }}
+                <a href="#contato" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }}
                   onClick={() => setMenuAberto(false)}>
                   Contato
                 </a>
                 <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white border-none w-full"
+                  whileTap={{ scale: 0.95 }}
+                  className="mt-4 px-6 py-4 rounded-2xl text-lg font-bold text-white border-none w-full shadow-lg"
                   style={{ backgroundColor: "#009865" }}
                 >
-                  Acessar
+                  Acessar Conta
                 </motion.button>
               </div>
             </motion.div>
@@ -151,18 +150,17 @@ export default function Navbar() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white rounded-2xl p-6 md:p-8 w-full max-w-lg relative"
-              style={{ boxShadow: "0 25px 60px rgba(0, 78, 58, 0.15)" }}
+              className="bg-white rounded-3xl p-8 md:p-10 w-full max-w-xl relative shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header do Modal */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold" style={{ color: "#004e3a" }}>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold" style={{ color: "#004e3a" }}>
                   Nossas Soluções
                 </h2>
                 <button
                   onClick={() => setSolucoesAberto(false)}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center bg-transparent border-none transition-colors"
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 border-none cursor-pointer hover:bg-gray-100 transition-colors"
                   style={{ color: "#004e3a" }}
                 >
                   <X className="w-5 h-5" />
@@ -170,7 +168,7 @@ export default function Navbar() {
               </div>
 
               {/* Cards de Soluções */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 {solucoes.map((solucao, index) => {
                   const Icone = solucao.icone;
                   return (
@@ -179,25 +177,24 @@ export default function Navbar() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      whileHover={{ x: 4 }}
-                      className="flex items-center gap-4 p-4 rounded-xl border-none text-left w-full transition-colors"
-                      style={{ backgroundColor: "#f0faf5" }}
+                      whileHover={{ x: 6, backgroundColor: "#f0faf5" }}
+                      className="flex items-center gap-5 p-5 rounded-2xl border border-gray-100 text-left w-full transition-all cursor-pointer bg-white"
                     >
                       <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                        className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
                         style={{ backgroundColor: `${solucao.cor}15` }}
                       >
-                        <Icone className="w-6 h-6" style={{ color: solucao.cor }} />
+                        <Icone className="w-7 h-7" style={{ color: solucao.cor }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-semibold mb-1" style={{ color: "#004e3a" }}>
+                        <h3 className="text-base font-bold mb-1" style={{ color: "#004e3a" }}>
                           {solucao.titulo}
                         </h3>
-                        <p className="text-xs leading-relaxed" style={{ color: "#006044" }}>
+                        <p className="text-sm leading-relaxed opacity-80" style={{ color: "#006044" }}>
                           {solucao.descricao}
                         </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#009865" }} />
+                      <ChevronRight className="w-5 h-5 shrink-0 opacity-40" style={{ color: "#009865" }} />
                     </motion.button>
                   );
                 })}
