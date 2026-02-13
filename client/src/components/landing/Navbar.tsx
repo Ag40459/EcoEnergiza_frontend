@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Menu, Sun, Gauge, TreePine, ChevronRight } from "lucide-react";
 
@@ -30,6 +30,15 @@ interface NavbarProps {
 export default function Navbar({ onOpenLogin }: NavbarProps) {
   const [menuAberto, setMenuAberto] = useState(false);
   const [solucoesAberto, setSolucoesAberto] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
@@ -38,11 +47,28 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
           <a href="/" className="flex items-center gap-2 no-underline">
-            <img src="/assets/logo.png" alt="EcoEnergiza" className="h-20 md:h-24 lg:h-32 w-auto object-contain transition-all" />
+            {/* Logo aumentada em 40% (de h-20 para h-28 em mobile, h-32 para h-44 em desktop) mantendo navbar h-20 */}
+            <img 
+              src="/assets/logo.png" 
+              alt="EcoEnergiza" 
+              className="h-28 md:h-36 lg:h-44 w-auto object-contain transition-all" 
+              style={{ marginTop: "10px" }}
+            />
           </a>
 
           <div className="hidden md:flex items-center gap-10">
-            <a href="#inicio" className="text-sm font-semibold no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Início</a>
+            {/* Ocultar Início quando não houver rolagem */}
+            {scrolled && (
+              <motion.a 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                href="#inicio" 
+                className="text-sm font-semibold no-underline hover:opacity-60" 
+                style={{ color: "#004e3a" }}
+              >
+                Início
+              </motion.a>
+            )}
             <button onClick={() => setSolucoesAberto(true)} className="text-sm font-semibold hover:opacity-60 bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Soluções</button>
             <a href="#sobre" className="text-sm font-semibold no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Sobre</a>
             <a href="#contato" className="text-sm font-semibold no-underline hover:opacity-60" style={{ color: "#004e3a" }}>Contato</a>
@@ -50,8 +76,28 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
 
           <div className="hidden md:block w-[120px]"></div>
 
-          <button onClick={() => setMenuAberto(!menuAberto)} className="md:hidden bg-transparent border-none p-2 cursor-pointer" style={{ color: "#004e3a" }}>
-            {menuAberto ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button 
+            onClick={() => setMenuAberto(!menuAberto)} 
+            className="md:hidden bg-transparent border-none p-2 cursor-pointer relative z-[110]" 
+            style={{ color: "#004e3a" }}
+          >
+            <div className="w-6 h-6 flex items-center justify-center relative">
+              <motion.div
+                animate={menuAberto ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }}
+                className="absolute w-6 h-0.5 bg-current"
+                transition={{ duration: 0.3 }}
+              />
+              <motion.div
+                animate={menuAberto ? { opacity: 0 } : { opacity: 1 }}
+                className="absolute w-6 h-0.5 bg-current"
+                transition={{ duration: 0.3 }}
+              />
+              <motion.div
+                animate={menuAberto ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }}
+                className="absolute w-6 h-0.5 bg-current"
+                transition={{ duration: 0.3 }}
+              />
+            </div>
           </button>
         </div>
 
@@ -59,7 +105,9 @@ export default function Navbar({ onOpenLogin }: NavbarProps) {
           {menuAberto && (
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="md:hidden bg-white shadow-xl border-t border-gray-100">
               <div className="px-6 py-8 flex flex-col gap-6">
-                <a href="#inicio" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Início</a>
+                {scrolled && (
+                  <a href="#inicio" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Início</a>
+                )}
                 <button onClick={() => { setSolucoesAberto(true); setMenuAberto(false); }} className="text-lg font-bold text-left bg-transparent border-none cursor-pointer" style={{ color: "#004e3a" }}>Soluções</button>
                 <a href="#sobre" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Sobre</a>
                 <a href="#contato" className="text-lg font-bold no-underline" style={{ color: "#004e3a" }} onClick={() => setMenuAberto(false)}>Contato</a>

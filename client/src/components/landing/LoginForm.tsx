@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, X, Lock, Mail, AlertCircle } from "lucide-react";
 
@@ -14,13 +14,23 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
   const [step, setStep] = useState<"email" | "code" | "other">(initialStep);
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
+  const [showSmartInfo, setShowSmartInfo] = useState(false);
   
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Efeito para detectar o @ e mostrar informação de cadastro automático
+  useEffect(() => {
+    if (email.includes("@") && !showSmartInfo) {
+      setShowSmartInfo(true);
+    } else if (!email.includes("@") && showSmartInfo) {
+      setShowSmartInfo(false);
+    }
+  }, [email, showSmartInfo]);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) {
+      // Aqui entrará a lógica de verificar se usuário existe
       setStep("code");
       setError("");
     }
@@ -50,12 +60,21 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
       className="w-full max-w-sm"
     >
       <div className="mb-8 text-center">
-        <h3 className="text-lg font-bold mb-2" style={{ color: "#004e3a" }}>
-          Acesse sua conta ou cadastre-se
+        {/* Título simplificado conforme pedido */}
+        <h3 className="text-xl font-bold mb-2" style={{ color: "#004e3a" }}>
+          Acesse sua conta...
         </h3>
-        <p className="text-sm opacity-70 leading-relaxed">
-          Insira seu e-mail para receber um código de acesso instantâneo. Se você ainda não tem conta, ela será criada agora!
-        </p>
+        {/* Descrição removida conforme pedido, mantendo apenas se houver info inteligente */}
+        {showSmartInfo && (
+          <motion.p 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="text-sm font-medium leading-relaxed mt-4 p-3 rounded-lg bg-green-50" 
+            style={{ color: "#007a52" }}
+          >
+            Caso você não tenha cadastro, ele será feito automaticamente. Se já for usuário, basta inserir seu e-mail aqui.
+          </motion.p>
+        )}
       </div>
 
       <form onSubmit={handleEmailSubmit} className="space-y-6">
@@ -65,7 +84,8 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
             placeholder="seu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white focus:outline-none transition-all text-base"
+            // Texto centralizado conforme pedido
+            className="w-full px-4 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white focus:outline-none transition-all text-base text-center"
             style={{ borderColor: "#f0f0f0" }}
             onFocus={(e) => e.currentTarget.style.borderColor = "#009865"}
             onBlur={(e) => e.currentTarget.style.borderColor = "#f0f0f0"}
@@ -98,10 +118,10 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
               setStep("other");
             }
           }}
-          className="text-xs font-bold underline opacity-60 hover:opacity-100 transition-opacity" 
+          className="text-sm font-bold underline opacity-60 hover:opacity-100 transition-opacity" 
           style={{ color: "#009865" }}
         >
-          Acesse sua conta de outra forma
+          Acesse de outra forma
         </button>
       </div>
     </motion.div>
@@ -140,15 +160,7 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
         Confirmar Acesso
       </button>
 
-      <div className="mt-6">
-        <button 
-          onClick={() => setStep("email")}
-          className="text-xs font-bold underline opacity-60 hover:opacity-100 transition-opacity" 
-          style={{ color: "#009865" }}
-        >
-          Voltar para o e-mail
-        </button>
-      </div>
+      {/* Botão de voltar removido conforme pedido */}
     </motion.div>
   );
 
@@ -158,9 +170,8 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
       animate={{ opacity: 1, x: 0 }}
       className="w-full max-w-sm"
     >
-      <div className="mb-8 flex items-center justify-between">
-        <h3 className="text-xl font-bold" style={{ color: "#004e3a" }}>Login Alternativo</h3>
-        <button onClick={() => setStep("email")} className="text-xs font-bold underline" style={{ color: "#009865" }}>Voltar</button>
+      <div className="mb-8">
+        <h3 className="text-xl font-bold text-center" style={{ color: "#004e3a" }}>Login com Senha</h3>
       </div>
       <div className="space-y-5">
         <div className="relative">
@@ -170,7 +181,7 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-gray-50 focus:outline-none text-sm"
+            className="w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-gray-50 focus:outline-none text-sm text-center"
             style={{ borderColor: "#f0f0f0" }}
           />
         </div>
@@ -181,17 +192,32 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-gray-50 focus:outline-none text-sm"
+            className="w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-gray-50 focus:outline-none text-sm text-center"
             style={{ borderColor: "#f0f0f0" }}
           />
         </div>
         <button
           className="w-full py-4 mt-4 rounded-xl font-bold text-white shadow-md transition-all"
           style={{ backgroundColor: "#009865" }}
-          onClick={() => alert("Login com senha (Em breve)...")}
+          onClick={() => {
+            if (email === "adm@adm.com" && password === "0000") {
+              alert("Acesso ADM autorizado!");
+            } else {
+              alert("Login com senha (Em breve)...");
+            }
+          }}
         >
-          Entrar
+          Confirmar
         </button>
+        <div className="mt-4 text-center">
+          <button 
+            onClick={() => setStep("email")}
+            className="text-xs font-bold underline opacity-60 hover:opacity-100 transition-opacity" 
+            style={{ color: "#009865" }}
+          >
+            Não tenho cadastro
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -212,12 +238,15 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
         className="bg-white rounded-[2.5rem] p-10 max-w-md w-full relative shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 rounded-full transition-colors">
+        {/* Ajuste do X: descer o título se necessário ou posicionar X corretamente */}
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors z-10">
           <X className="w-6 h-6 text-gray-400" />
         </button>
-        {step === "email" && renderEmailStep()}
-        {step === "code" && renderCodeStep()}
-        {step === "other" && renderOtherStep()}
+        <div className="mt-4">
+          {step === "email" && renderEmailStep()}
+          {step === "code" && renderCodeStep()}
+          {step === "other" && renderOtherStep()}
+        </div>
       </motion.div>
     </div>
   );

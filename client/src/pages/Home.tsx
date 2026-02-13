@@ -2,16 +2,42 @@ import { useState } from "react";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import LoginForm from "@/components/landing/LoginForm";
+import MainDashboard from "@/components/dashboard/MainDashboard";
+import AICopilot from "@/components/dashboard/AICopilot";
+import ConsultantModal from "@/components/modals/ConsultantModal";
 import { AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [loginAberto, setLoginAberto] = useState(false);
   const [initialStep, setInitialStep] = useState<"email" | "code" | "other">("email");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [consultantModalOpen, setConsultantModalOpen] = useState(false);
 
   const abrirLogin = (step: "email" | "code" | "other" = "email") => {
     setInitialStep(step);
     setLoginAberto(true);
   };
+
+  // Se estiver logado, mostra o Dashboard
+  if (isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <MainDashboard />
+        <AICopilot />
+        <ConsultantModal 
+          isOpen={consultantModalOpen} 
+          onClose={() => setConsultantModalOpen(false)} 
+        />
+        {/* Botão temporário para testar o modal de consultor no dashboard */}
+        <button 
+          onClick={() => setConsultantModalOpen(true)}
+          className="fixed bottom-24 right-6 px-4 py-2 bg-[#004e3a] text-white rounded-xl text-[10px] font-bold shadow-lg z-[150]"
+        >
+          TESTAR MODAL CONSULTOR
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-white overflow-hidden fixed inset-0">
@@ -26,6 +52,7 @@ export default function Home() {
           <LoginForm 
             isMobile={true} 
             onOpenOther={() => abrirLogin("other")}
+            onLoginSuccess={() => setIsLoggedIn(true)}
           />
         </div>
       </div>
@@ -35,6 +62,7 @@ export default function Home() {
           <LoginForm 
             initialStep={initialStep} 
             onClose={() => setLoginAberto(false)} 
+            onLoginSuccess={() => setIsLoggedIn(true)}
           />
         )}
       </AnimatePresence>
