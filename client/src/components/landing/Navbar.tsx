@@ -1,10 +1,3 @@
-/*
- * Design: Clean Orgânico - EcoEnergiza
- * Navbar minimalista com logo, menu e botão Acessar
- * Modal de Soluções com cards expansíveis
- * Cores: Verde esmeralda #009865, texto #004e3a
- */
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, X, Menu, Sun, Gauge, TreePine, ChevronRight } from "lucide-react";
@@ -40,7 +33,6 @@ export default function Navbar() {
         style={{ backgroundColor: "rgba(255, 255, 255, 0.7)", backdropFilter: "blur(10px)" }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
-          {/* Logo */}
           <a href="/" className="flex items-center gap-2 no-underline">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#009865" }}>
               <Zap className="w-5 h-5 text-white" />
@@ -50,7 +42,6 @@ export default function Navbar() {
             </span>
           </a>
 
-          {/* Menu Desktop */}
           <div className="hidden md:flex items-center gap-10">
             <a href="#inicio" className="text-sm font-semibold no-underline transition-opacity hover:opacity-60" style={{ color: "#004e3a" }}>
               Início
@@ -70,7 +61,6 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* Botão Acessar Desktop */}
           <div className="hidden md:block">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -82,7 +72,6 @@ export default function Navbar() {
             </motion.button>
           </div>
 
-          {/* Hamburger Mobile */}
           <button
             onClick={() => setMenuAberto(!menuAberto)}
             className="md:hidden bg-transparent border-none p-2 cursor-pointer"
@@ -92,7 +81,6 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Menu Mobile */}
         <AnimatePresence>
           {menuAberto && (
             <motion.div
@@ -134,7 +122,6 @@ export default function Navbar() {
         </AnimatePresence>
       </nav>
 
-      {/* Modal de Soluções */}
       <AnimatePresence>
         {solucoesAberto && (
           <motion.div
@@ -153,7 +140,6 @@ export default function Navbar() {
               className="bg-white rounded-3xl p-8 md:p-10 w-full max-w-xl relative shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header do Modal */}
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold" style={{ color: "#004e3a" }}>
                   Nossas Soluções
@@ -167,7 +153,6 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Cards de Soluções */}
               <div className="flex flex-col gap-4">
                 {solucoes.map((solucao, index) => {
                   const Icone = solucao.icone;

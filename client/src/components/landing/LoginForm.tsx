@@ -46,10 +46,6 @@ export default function LoginForm() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* 
-              Removido: Mensagem de boas-vindas conforme solicitado pelo usuário.
-              O email agora é o foco principal.
-            */}
             <div className="mb-8">
               <label 
                 htmlFor="email" 

@@ -51,7 +51,6 @@ export default function Hero() {
       }}
     >
       <div className="w-full max-w-2xl lg:max-w-4xl flex flex-col lg:flex-row items-center gap-12">
-        {/* Conteúdo de Texto */}
         <div className="flex-1 text-left">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -93,7 +92,6 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mockup do App (Lado Direito no Desktop) */}
         <div className="hidden lg:block flex-1 relative">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -101,11 +99,6 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative z-10"
           >
-            {/* 
-              Aqui seria o componente do Mockup do Celular.
-              Como o usuário enviou uma imagem, podemos simular o mockup com um card ou imagem.
-              Vou usar uma representação visual que remeta ao anexo.
-            */}
             <div className="w-[320px] h-[640px] bg-[#1a1a2e] rounded-[3rem] border-[8px] border-[#2a2a40] shadow-2xl overflow-hidden relative mx-auto">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#2a2a40] rounded-b-2xl z-20"></div>
               <div className="w-full h-full bg-white p-6 pt-10">
@@ -143,7 +136,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Badges Flutuantes */}
               <div className="absolute -left-12 top-20 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 border border-gray-100">
                 <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
                   <span className="text-yellow-600 text-[10px]">⚡</span>
@@ -159,8 +151,6 @@ export default function Hero() {
               </div>
             </div>
           </motion.div>
-
-          {/* Círculo de fundo decorativo */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#009865] opacity-[0.03] rounded-full blur-3xl -z-0"></div>
         </div>
       </div>
