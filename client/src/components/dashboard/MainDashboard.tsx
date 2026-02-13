@@ -5,10 +5,11 @@ import {
   Zap, Sun, Moon, ChevronRight, X,
   LayoutDashboard, Users, Calendar, DollarSign, BookOpen, BarChart,
   Home as HomeIcon, PieChart, Award, Wallet, Search, Bell, Menu, Plus,
-  Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2
+  Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2,
+  Factory, Settings2, Edit3
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
-import { GenerationModal, ConsumptionModal } from '../modals/BusinessModals';
+import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
 
 interface MainDashboardProps {
   onLogout: () => void;
@@ -18,7 +19,7 @@ interface MainDashboardProps {
   isAdmin?: boolean;
 }
 
-type TabId = 'inicio' | 'dados' | 'seguranca' | 'perfil' | 'indicacoes' | 'moedas' | 'consultor';
+type TabId = 'inicio' | 'dados' | 'seguranca' | 'perfil' | 'indicacoes' | 'moedas' | 'consultor' | 'adm';
 
 export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenConsultant, isAdmin = false }: MainDashboardProps) {
   const [showAdminModal, setShowAdminModal] = useState(false);
@@ -27,6 +28,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [casaAtiva, setCasaAtiva] = useState(false);
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
+  const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [footerTabs, setFooterTabs] = useState<TabId[]>(['inicio', 'indicacoes', 'seguranca', 'perfil']);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -35,27 +37,19 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 400);
+      setIsSmallScreen(window.innerWidth < 640);
     };
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Ao carregar, se for admin, o sistema deve saber (já vem via props)
-  // Mas o usuário não deve ver o painel administrativo automaticamente a menos que tenha o perfil
-  useEffect(() => {
-    if (isAdmin && activeTab === 'inicio') {
-      // Opcional: Algum indicador visual de que é admin
-    }
-  }, [isAdmin]);
-
   const adminCards = [
-    { id: 'textos', titulo: 'Textos', icone: FileText, cor: 'bg-blue-500' },
-    { id: 'leads', titulo: 'Leads', icone: Users, cor: 'bg-green-500' },
-    { id: 'agenda', titulo: 'Agenda', icone: Calendar, cor: 'bg-purple-500' },
+    { id: 'textos', titulo: 'Editar Textos', icone: Edit3, cor: 'bg-blue-500' },
+    { id: 'leads', titulo: 'Gestão Leads', icone: Users, cor: 'bg-green-500' },
+    { id: 'agenda', titulo: 'Agenda Geral', icone: Calendar, cor: 'bg-purple-500' },
     { id: 'orcamentos', titulo: 'Orçamentos', icone: DollarSign, cor: 'bg-yellow-500' },
-    { id: 'materiais', titulo: 'Materiais', icone: BookOpen, cor: 'bg-orange-500' },
+    { id: 'config', titulo: 'Configurações', icone: Settings2, cor: 'bg-orange-500' },
     { id: 'performance', titulo: 'Performance', icone: BarChart, cor: 'bg-pink-500' },
   ];
 
@@ -67,6 +61,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'moedas', label: 'Moedas', icon: Wallet },
     { id: 'consultor', label: 'Consultor', icon: Award },
+    { id: 'adm', label: 'ADM', icon: Settings2 },
   ];
 
   const renderTabContent = () => {
@@ -74,7 +69,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
       case 'inicio':
         return (
           <div className="flex flex-col items-center gap-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full justify-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full justify-items-center">
               <DynamicAnimation 
                 type="generation" 
                 state={usinaAtiva ? 'active' : 'inactive'} 
@@ -92,9 +87,17 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 onClick={() => setShowConsModal(true)} 
               />
               <DynamicAnimation 
+                type="private_plant" 
+                state="active" 
+                label="Usina Particular" 
+                value="Gestão" unit="Ativa" 
+                isAtivo={true}
+                onClick={() => setShowPrivatePlantModal(true)} 
+              />
+              <DynamicAnimation 
                 type="consultant" 
                 state="active" 
-                label="Seja Consultor" 
+                label="Renda Extra" 
                 value="15%" unit="Comissão" 
                 isAtivo={true}
                 onClick={onOpenConsultant} 
@@ -112,15 +115,15 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 </div>
                 <div className="flex flex-col">
                   <h2 className="text-2xl font-black text-[#004e3a] dark:text-white leading-tight">
-                    {isSmallScreen ? userName.split(' ')[0] : userName}
+                    {userName}
                   </h2>
                   <p className="text-sm font-bold text-gray-400">alex.silva@email.com</p>
                   {isAdmin && (
                     <button 
-                      onClick={() => setShowAdminModal(true)}
+                      onClick={() => setActiveTab('adm')}
                       className="mt-2 self-start px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-black uppercase tracking-wider"
                     >
-                      Painel ADM
+                      Acessar Painel ADM
                     </button>
                   )}
                 </div>
@@ -130,7 +133,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 {[
                   { label: 'Meus Dados', icon: User, tab: 'dados' },
                   { label: 'Segurança', icon: Shield, tab: 'seguranca' },
-                  { label: 'Documentos', icon: FileText, tab: 'seguranca' },
                   { label: 'Personalizar Rodapé', icon: Settings, action: 'customize' },
                 ].map((item, idx) => (
                   <button 
@@ -138,10 +140,11 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                     onClick={() => {
                       if (item.tab) setActiveTab(item.tab as TabId);
                       if (item.action === 'customize') {
-                        // Lógica simples de alternar abas do rodapé para demonstração
-                        const newTabs: TabId[] = ['inicio', 'moedas', 'consultor', 'perfil'];
-                        setFooterTabs(newTabs);
-                        alert("Rodapé personalizado!");
+                        const availableTabs: TabId[] = ['inicio', 'moedas', 'consultor', 'perfil', 'adm', 'seguranca', 'indicacoes'];
+                        const currentIdx = availableTabs.indexOf(footerTabs[1]);
+                        const nextTabs: TabId[] = ['inicio', availableTabs[(currentIdx + 1) % availableTabs.length], 'seguranca', 'perfil'];
+                        setFooterTabs(nextTabs);
+                        alert("Rodapé alterado para: " + nextTabs.join(', '));
                       }
                     }}
                     className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors"
@@ -161,6 +164,37 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               >
                 <LogOut className="w-5 h-5" /> Sair da Conta
               </button>
+            </div>
+          </motion.div>
+        );
+      case 'adm':
+        return (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 max-w-4xl mx-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-[3.5rem] p-10 shadow-2xl border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Painel Administrativo</h2>
+                  <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Gestão da Plataforma EcoEnergiza</p>
+                </div>
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center">
+                  <Settings2 className="w-8 h-8 text-purple-600" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {adminCards.map((card) => (
+                  <button 
+                    key={card.id} 
+                    onClick={() => alert(`Abrindo: ${card.titulo}`)}
+                    className="flex flex-col items-center gap-4 p-8 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all group"
+                  >
+                    <div className={`w-16 h-16 rounded-2xl ${card.cor} flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}>
+                      <card.icone className="w-8 h-8 text-white" />
+                    </div>
+                    <span className="font-black text-sm text-[#004e3a] dark:text-white">{card.titulo}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
         );
@@ -192,11 +226,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                   </div>
                   <button className="px-6 py-2 bg-[#004e3a] text-white rounded-full font-black text-xs uppercase">Iniciar Biometria</button>
                 </div>
-
-                <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-900/10 rounded-2xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#009865]" />
-                  <p className="text-[10px] font-bold text-[#009865]">Seus dados são criptografados e protegidos pela LGPD.</p>
-                </div>
               </div>
             </div>
           </motion.div>
@@ -212,7 +241,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
 
   return (
     <div className={`flex flex-col min-h-screen pb-24 lg:pb-0 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Navbar Ajustada */}
+      {/* Navbar com Saldos Lado a Lado */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -222,33 +251,34 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
             >
               <img src="https://i.pravatar.cc/150?u=alex" alt="Avatar" className="w-full h-full object-cover" />
             </button>
-            <div className="flex flex-col min-w-0">
+            <div className="hidden sm:flex flex-col min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-black text-[#004e3a] dark:text-white truncate text-sm md:text-base">
-                  {isSmallScreen ? userName.split(' ')[0] : userName}
+                  {userName}
                 </span>
                 <Award className="w-4 h-4 text-yellow-500 shrink-0" />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Saldos Lado a Lado no Desktop */}
+            <div className="flex items-center gap-2 sm:gap-4">
               <button 
                 onClick={() => setShowGenModal(true)}
-                className="flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-100 dark:border-green-800"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-100 dark:border-green-800 transition-all hover:scale-105"
               >
                 <Zap className="w-3 h-3 text-yellow-500" />
-                <span className={`text-[10px] font-black text-[#004e3a] dark:text-green-400 ${!usinaAtiva ? 'blur-[4px]' : ''}`}>
+                <span className={`text-[10px] sm:text-xs font-black text-[#004e3a] dark:text-green-400 ${!usinaAtiva ? 'blur-[4px]' : ''}`}>
                   124.5 <span className="opacity-50">kWh</span>
                 </span>
               </button>
               <button 
                 onClick={() => setShowWalletModal(true)}
-                className="flex items-center gap-2 px-3 py-1 bg-yellow-50 dark:bg-yellow-900/20 rounded-full border border-yellow-100 dark:border-yellow-800"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-full border border-yellow-100 dark:border-yellow-800 transition-all hover:scale-105"
               >
                 <Wallet className="w-3 h-3 text-yellow-600" />
-                <span className="text-[10px] font-black text-[#004e3a] dark:text-yellow-500">
+                <span className="text-[10px] sm:text-xs font-black text-[#004e3a] dark:text-yellow-500">
                   0,00 <span className="opacity-50">ECO</span>
                 </span>
               </button>
@@ -296,7 +326,10 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         onClose={() => setShowConsModal(false)} 
         onActivate={() => setCasaAtiva(true)}
         isAtivo={casaAtiva}
-        onToggleCiclo={() => {}}
+      />
+      <PrivatePlantModal 
+        isOpen={showPrivatePlantModal} 
+        onClose={() => setShowPrivatePlantModal(false)} 
       />
 
       {/* Modal de Moedas */}
@@ -329,32 +362,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 </div>
 
                 <button className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Converter em Desconto</button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Modal Admin */}
-      <AnimatePresence>
-        {showAdminModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] p-10 max-w-4xl w-full shadow-2xl relative">
-              <button onClick={() => setShowAdminModal(false)} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
-              <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400 mb-8">Painel Administrativo</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {adminCards.map((card) => (
-                  <button 
-                    key={card.id} 
-                    onClick={() => alert("Aguarde... Funcionalidade em desenvolvimento.")}
-                    className="flex flex-col items-center gap-4 p-8 rounded-[2.5rem] bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:scale-105 transition-all group"
-                  >
-                    <div className={`w-16 h-16 rounded-2xl ${card.cor} flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}>
-                      <card.icone className="w-8 h-8 text-white" />
-                    </div>
-                    <span className="font-black text-[#004e3a] dark:text-white">{card.titulo}</span>
-                  </button>
-                ))}
               </div>
             </motion.div>
           </div>

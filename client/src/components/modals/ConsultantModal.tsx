@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Unlock, CheckCircle2, Play, WifiOff, ArrowRight, User, Mail, Phone, MapPin, Sparkles, LogIn, Award, BarChart, Users, DollarSign } from 'lucide-react';
+import { 
+  X, Lock, Unlock, CheckCircle2, Play, WifiOff, ArrowRight, User, Mail, Phone, MapPin, Sparkles, LogIn, Award, BarChart, Users, DollarSign, Target, ChevronLeft
+} from 'lucide-react';
 
 interface ConsultantModalProps {
   isOpen: boolean;
@@ -8,147 +10,155 @@ interface ConsultantModalProps {
 }
 
 export default function ConsultantModal({ isOpen, onClose }: ConsultantModalProps) {
-  const [step, setStep] = useState<'login' | 'explaining' | 'dashboard'>('login');
-  const [email, setEmail] = useState('');
-  const [activeExplainStep, setActiveExplainStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(1);
+  const [lockedSteps, setLockedSteps] = useState<number[]>([2, 3, 4, 5, 6]);
+  const [form, setForm] = useState({ nome: '', email: '', telefone: '', regiao: '' });
 
-  if (!isOpen) return null;
+  const steps = [
+    { id: 1, title: "Bem-vindo à Oportunidade", icon: Sparkles },
+    { id: 2, title: "Conheça o Programa", icon: Play },
+    { id: 3, title: "Seus Benefícios", icon: Award },
+    { id: 4, title: "Está Pronto?", icon: Target },
+    { id: 5, title: "Informações Básicas", icon: Users },
+    { id: 6, title: "Confirmação", icon: CheckCircle2 },
+  ];
 
-  const handleLogin = () => {
-    // Simulação: se o e-mail for consultor@teste.com, abre o dashboard. Caso contrário, explica o programa.
-    if (email.toLowerCase() === 'consultor@teste.com') {
-      setStep('dashboard');
+  const unlockNext = (current: number) => {
+    setLockedSteps(prev => prev.filter(s => s !== current + 1));
+    setActiveStep(current + 1);
+  };
+
+  const toggleLock = (id: number) => {
+    if (lockedSteps.includes(id)) {
+      setLockedSteps(prev => prev.filter(s => s !== id));
     } else {
-      setStep('explaining');
+      setLockedSteps(prev => [...prev, id]);
     }
   };
 
-  const renderLogin = () => (
-    <div className="space-y-8 py-6">
-      <div className="text-center">
-        <div className="w-20 h-20 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Award className="w-10 h-10 text-[#009865]" />
-        </div>
-        <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Portal do Consultor</h2>
-        <p className="text-sm font-bold text-gray-400 mt-2">Acesse sua conta ou conheça o programa</p>
-      </div>
-
-      <div className="space-y-4">
-        <div className="relative group">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-[#009865] transition-colors" />
-          <input 
-            type="email" 
-            placeholder="Seu e-mail de consultor" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-12 pr-4 py-5 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none font-bold dark:text-white transition-all"
-          />
-        </div>
-        <button 
-          onClick={handleLogin}
-          disabled={!email.trim()}
-          className="w-full py-5 bg-[#009865] text-white rounded-2xl font-black shadow-xl active:scale-95 transition-transform disabled:opacity-50"
-        >
-          Acessar Dashboard
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderExplaining = () => (
-    <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <button onClick={() => setStep('login')} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><ChevronLeft className="w-4 h-4" /></button>
-        <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Como Funciona?</h2>
-      </div>
-
-      <div className="space-y-6">
-        {[
-          { id: 1, title: "Indique Clientes", desc: "Compartilhe seu link exclusivo com pessoas e empresas que querem economizar energia." },
-          { id: 2, title: "Acompanhe Vendas", desc: "Use nosso CRM integrado para ver o progresso de cada indicação em tempo real." },
-          { id: 3, title: "Ganhe Comissões", desc: "Receba comissões recorrentes sobre cada kW contratado pelos seus indicados." }
-        ].map((item) => (
-          <div key={item.id} className={`p-6 rounded-3xl border-2 transition-all ${activeExplainStep === item.id ? 'border-[#009865] bg-green-50/50 dark:bg-green-900/10' : 'border-gray-100 dark:border-gray-800'}`} onClick={() => setActiveExplainStep(item.id)}>
-            <div className="flex items-center gap-4">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs ${activeExplainStep === item.id ? 'bg-[#009865] text-white' : 'bg-gray-200 text-gray-500'}`}>{item.id}</div>
-              <div>
-                <h4 className="font-black text-[#004e3a] dark:text-white text-sm">{item.title}</h4>
-                <p className="text-xs text-gray-500 font-medium mt-1">{item.desc}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <button 
-        onClick={() => alert("Cadastro enviado para análise!")}
-        className="w-full py-5 bg-[#009865] text-white rounded-[2rem] font-black shadow-xl"
-      >
-        Quero ser um Consultor
-      </button>
-    </div>
-  );
-
-  const renderDashboard = () => (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-            <BarChart className="w-6 h-6 text-[#009865]" />
-          </div>
-          <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Minha Performance</h2>
-        </div>
-        <button onClick={() => setStep('login')} className="text-[10px] font-black text-gray-400 uppercase underline">Sair</button>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-3xl space-y-2">
-          <Users className="w-5 h-5 text-blue-500" />
-          <p className="text-2xl font-black text-[#004e3a] dark:text-white">12</p>
-          <p className="text-[10px] font-black text-gray-400 uppercase">Leads Ativos</p>
-        </div>
-        <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-3xl space-y-2">
-          <DollarSign className="w-5 h-5 text-green-500" />
-          <p className="text-2xl font-black text-[#004e3a] dark:text-white">R$ 1.250</p>
-          <p className="text-[10px] font-black text-gray-400 uppercase">Comissões</p>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="font-black text-[#004e3a] dark:text-white text-sm uppercase tracking-widest ml-2">Ações Rápidas</h4>
-        <div className="grid grid-cols-1 gap-2">
-          <button className="flex items-center justify-between p-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl hover:border-[#009865] transition-all">
-            <span className="text-xs font-black text-[#004e3a] dark:text-white">Novo Orçamento</span>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-          </button>
-          <button className="flex items-center justify-between p-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl hover:border-[#009865] transition-all">
-            <span className="text-xs font-black text-[#004e3a] dark:text-white">Materiais de Marketing</span>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={onClose}>
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl" onClick={onClose}>
       <motion.div 
         initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-gray-900 rounded-[3.5rem] p-10 max-w-lg w-full relative shadow-2xl border border-white/10"
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar border border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
           <X className="w-6 h-6 text-gray-400" />
         </button>
 
-        {step === 'login' && renderLogin()}
-        {step === 'explaining' && renderExplaining()}
-        {step === 'dashboard' && renderDashboard()}
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400 uppercase tracking-tighter">Torne-se um Consultor Ecolote</h2>
+          <p className="text-sm font-bold text-gray-400 mt-2">Ganhe comissões, seja nosso consultor</p>
+        </div>
+
+        <div className="space-y-4">
+          {steps.map((step) => (
+            <div key={step.id} className="border-b border-gray-100 dark:border-gray-800 last:border-none pb-4">
+              <button 
+                onClick={() => !lockedSteps.includes(step.id) && setActiveStep(step.id)}
+                className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
+                  activeStep === step.id ? 'bg-green-50 dark:bg-green-900/20' : ''
+                } ${lockedSteps.includes(step.id) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeStep === step.id ? 'bg-[#009865] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
+                    <step.icon className="w-5 h-5" />
+                  </div>
+                  <span className={`font-black text-sm uppercase tracking-widest ${activeStep === step.id ? 'text-[#004e3a] dark:text-white' : 'text-gray-400'}`}>
+                    Passo {step.id}: {step.title}
+                  </span>
+                </div>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); toggleLock(step.id); }}
+                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  {lockedSteps.includes(step.id) ? <Lock className="w-4 h-4 text-red-400" /> : <Unlock className="w-4 h-4 text-green-400" />}
+                </button>
+              </button>
+
+              <AnimatePresence>
+                {activeStep === step.id && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden px-4 pt-4"
+                  >
+                    {step.id === 1 && (
+                      <div className="space-y-4">
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">
+                          Bem-vindo à maior oportunidade de empreendedorismo sustentável. Como consultor, você terá acesso a ferramentas de IA, CRM e uma carteira de clientes ilimitada.
+                        </p>
+                        <button onClick={() => unlockNext(1)} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Confirmar e Prosseguir</button>
+                      </div>
+                    )}
+                    {step.id === 2 && (
+                      <div className="space-y-4">
+                        <div className="aspect-video bg-gray-900 rounded-[2rem] flex items-center justify-center relative group overflow-hidden">
+                          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800" className="w-full h-full object-cover opacity-50" />
+                          <Play className="w-16 h-16 text-white group-hover:scale-110 transition-transform cursor-pointer" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
+                            <p className="text-[10px] font-black text-[#009865] uppercase">Comissões</p>
+                            <p className="text-xs font-bold text-gray-500">Até 15% por venda direta.</p>
+                          </div>
+                          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
+                            <p className="text-[10px] font-black text-[#009865] uppercase">Ferramentas</p>
+                            <p className="text-xs font-bold text-gray-500">IA, CRM e Agenda integrada.</p>
+                          </div>
+                        </div>
+                        <button onClick={() => unlockNext(2)} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Próximo Passo</button>
+                      </div>
+                    )}
+                    {step.id === 3 && (
+                      <div className="space-y-4">
+                        <ul className="space-y-3">
+                          {['Comissão por venda', 'Ferramentas de IA para ajudar', 'Suporte da equipe', 'Acesso a materiais de marketing', 'Agenda e CRM integrados', 'Gerador de orçamentos automático'].map((b, i) => (
+                            <li key={i} className="flex items-center gap-3 text-sm font-bold text-[#004e3a] dark:text-white">
+                              <CheckCircle2 className="w-4 h-4 text-[#009865]" /> {b}
+                            </li>
+                          ))}
+                        </ul>
+                        <button onClick={() => unlockNext(3)} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Estou Interessado</button>
+                      </div>
+                    )}
+                    {step.id === 4 && (
+                      <div className="space-y-4 text-center">
+                        <p className="text-xl font-black text-[#004e3a] dark:text-white">Você está pronto para transformar sua carreira?</p>
+                        <button onClick={() => unlockNext(4)} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Quero Ser Consultor</button>
+                        <button className="text-xs font-black text-gray-400 uppercase tracking-widest hover:underline">Saber Mais Detalhes</button>
+                      </div>
+                    )}
+                    {step.id === 5 && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <input type="text" placeholder="Nome Completo" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
+                          <input type="email" placeholder="E-mail" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
+                          <input type="text" placeholder="Telefone" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
+                          <input type="text" placeholder="Região de Atuação" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
+                        </div>
+                        <button onClick={() => unlockNext(5)} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black shadow-lg">Enviar Inscrição</button>
+                      </div>
+                    )}
+                    {step.id === 6 && (
+                      <div className="text-center space-y-6 py-4">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                          <CheckCircle2 className="w-12 h-12 text-[#009865]" />
+                        </div>
+                        <h3 className="text-2xl font-black text-[#004e3a] dark:text-white">Inscrição Enviada!</h3>
+                        <p className="text-sm font-bold text-gray-400">Nossa equipe entrará em contato em até 24h.</p>
+                        <button onClick={onClose} className="w-full py-4 bg-[#004e3a] text-white rounded-2xl font-black">Voltar para Home</button>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
       </motion.div>
     </div>
   );
-}
-
-function ChevronLeft({ className }: { className?: string }) {
-  return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
 }

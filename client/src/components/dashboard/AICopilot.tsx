@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, Bot, Sparkles, ChevronLeft, Trash2, Mail } from 'lucide-react';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai';
-  timestamp: Date;
-}
+import { MessageCircle, X, Send, User, Bot, Trash2, Star, Mail, ArrowRight, ChevronLeft, Sparkles } from 'lucide-react';
 
 interface AICopilotProps {
   theme?: 'light' | 'dark';
@@ -16,25 +9,14 @@ interface AICopilotProps {
 
 export default function AICopilot({ theme = 'light', isConsultant = false }: AICopilotProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
+    { role: 'ai', text: 'Olá! Sou a Sol, sua assistente virtual EcoEnergiza. Como posso te ajudar hoje?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [showEvaluation, setShowEvaluation] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      const initialText = isConsultant 
-        ? "Olá, Consultor! Estou aqui para ajudar você a gerir seus leads e otimizar suas vendas de energia. Como posso ajudar hoje?"
-        : "Olá! Sou o assistente da EcoEnergiza. Posso te ajudar a entender seu consumo, contratar geração de energia ou tirar dúvidas sobre o app. O que você precisa?";
-      
-      setMessages([{ 
-        id: '1', 
-        text: initialText, 
-        sender: 'ai', 
-        timestamp: new Date() 
-      }]);
-    }
-  }, [isOpen, isConsultant]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -44,105 +26,150 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
 
   const handleSend = () => {
     if (!input.trim()) return;
-    const userMsg: Message = { id: Date.now().toString(), text: input, sender: 'user', timestamp: new Date() };
-    setMessages(prev => [...prev, userMsg]);
-    const currentInput = input;
-    setInput("");
+    
+    const userMsg = input.trim();
+    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setInput('');
 
     setTimeout(() => {
-      let response = "Desculpe, ainda estou aprendendo sobre isso. Pode tentar perguntar de outra forma?";
-      const lowerInput = currentInput.toLowerCase();
+      let aiResponse = "Interessante! Posso te ajudar com mais detalhes sobre a EcoEnergiza. O que mais gostaria de saber?";
+      const lower = userMsg.toLowerCase();
       
-      if (lowerInput.includes('consultor')) {
-        response = "Para se tornar um consultor EcoEnergiza, você pode acessar a aba 'Seja Consultor' no seu dashboard. Lá explicamos todas as fases e benefícios! [Clique aqui para ir para Consultor]";
-      } else if (lowerInput.includes('consumo') || lowerInput.includes('casa')) {
-        response = "Você pode ver o consumo da sua casa clicando no card 'Consumo da Casa' no início do seu dashboard. Se o saldo estiver embaçado, você precisará adquirir um Smart Meter. [Ver Consumo]";
-      } else if (lowerInput.includes('geração') || lowerInput.includes('usina') || lowerInput.includes('contratar')) {
-        response = "Para contratar geração de energia, clique em 'Geração de Energia' no dashboard. Você poderá simular quantos kW precisa e ver um orçamento detalhado na hora! [Contratar Geração]";
-      } else if (lowerInput.includes('moeda') || lowerInput.includes('eco')) {
-        response = "As moedas ECO são nosso programa de recompensas. Você pode ver seu saldo e histórico clicando no ícone da carteira no topo do app. [Minha Carteira]";
-      } else if (isConsultant && (lowerInput.includes('lead') || lowerInput.includes('venda'))) {
-        response = "Como consultor, você tem acesso a ferramentas exclusivas de CRM e materiais de marketing no seu painel administrativo. Como posso ajudar com seus leads hoje?";
+      if (lower.includes('consultor')) {
+        aiResponse = "Para se tornar um consultor EcoEnergiza e ganhar comissões, clique na animação 'Renda Extra' no seu dashboard. Lá você encontrará o passo a passo completo!";
+      } else if (lower.includes('consumo')) {
+        aiResponse = "Você pode acompanhar o consumo da sua casa clicando no card 'Consumo da Casa'. Se o saldo estiver embaçado, você precisará adquirir um Smart Meter para iniciar o monitoramento real.";
+      } else if (lower.includes('usina') || lower.includes('geração')) {
+        aiResponse = "Nossas usinas remotas permitem que você economize até 95% na conta de luz. Clique em 'Geração de Energia' para simular seu projeto solar agora mesmo!";
       }
 
-      const aiMsg: Message = { id: (Date.now() + 1).toString(), text: response, sender: 'ai', timestamp: new Date() };
-      setMessages(prev => [...prev, aiMsg]);
+      setMessages(prev => [...prev, { role: 'ai', text: aiResponse }]);
     }, 1000);
   };
 
-  const handleEndChat = (action: 'clear' | 'email') => {
-    if (action === 'email') {
-      alert("Relatório da conversa enviado para seu e-mail com sucesso!");
+  const handleEndSession = () => {
+    const confirmEmail = window.confirm("Deseja receber a cópia deste atendimento por e-mail?");
+    if (confirmEmail) {
+      alert("Histórico enviado para seu e-mail com sucesso!");
     }
-    setMessages([{ id: '1', text: "Chat encerrado. Como posso ajudar novamente?", sender: 'ai', timestamp: new Date() }]);
-    setInput("");
+    setShowEvaluation(true);
+  };
+
+  const submitEvaluation = () => {
+    alert("Obrigado pela sua avaliação!");
+    setMessages([{ role: 'ai', text: 'Atendimento encerrado. Como posso te ajudar agora?' }]);
+    setShowEvaluation(false);
+    setRating(0);
+    setComment('');
+    setIsOpen(false);
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-[200]" ref={containerRef}>
+    <div className="fixed bottom-24 right-6 z-[200]">
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }} 
-            animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`absolute bottom-20 right-0 w-[350px] h-[500px] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}
+            initial={{ opacity: 0, y: 100, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 100, scale: 0.9 }}
+            className={`absolute bottom-20 right-0 w-[90vw] max-w-[400px] h-[600px] rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}
           >
-            {/* Header */}
+            {/* Header com Imagem da Assistente */}
             <div className="p-6 bg-[#004e3a] text-white flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#009865] rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-green-400 overflow-hidden">
+                  <img src="https://i.pravatar.cc/150?u=sol" alt="Sol" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <span className="font-black text-sm block leading-none">Copiloto EcoEnergiza</span>
-                  <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{isConsultant ? 'Modo Consultor' : 'Suporte Inteligente'}</span>
+                  <h3 className="font-black text-sm uppercase tracking-widest leading-none">Sol</h3>
+                  <p className="text-[8px] text-green-400 font-bold uppercase tracking-tighter">Assistente Virtual</p>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)}><X className="w-5 h-5" /></button>
+              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <X className="w-6 h-6" />
+              </button>
             </div>
 
-            {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {/* Chat Messages */}
+            <div ref={scrollRef} className={`flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+              {messages.map((msg, idx) => (
+                <motion.div 
+                  key={idx}
+                  initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
                   <div className={`max-w-[80%] p-4 rounded-2xl text-xs font-bold ${
-                    msg.sender === 'user' 
+                    msg.role === 'user' 
                       ? 'bg-[#009865] text-white rounded-tr-none' 
-                      : (theme === 'dark' ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-[#004e3a]') + ' rounded-tl-none'
+                      : (theme === 'dark' ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-gray-700 border-gray-100') + ' border shadow-sm rounded-tl-none'
                   }`}>
                     {msg.text}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            {/* Actions */}
-            <div className={`px-6 py-2 flex gap-4 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-50'}`}>
-              <button onClick={() => handleEndChat('clear')} className="text-[9px] font-black text-gray-400 hover:text-red-400 flex items-center gap-1 uppercase">
-                <Trash2 className="w-3 h-3" /> Limpar
-              </button>
-              <button onClick={() => handleEndChat('email')} className="text-[9px] font-black text-gray-400 hover:text-[#009865] flex items-center gap-1 uppercase">
-                <Mail className="w-3 h-3" /> Enviar p/ Email
-              </button>
+            {/* Input Area */}
+            <div className={`p-6 border-t ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="text" value={input} onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    placeholder="Como posso ajudar?"
+                    className={`flex-1 p-4 rounded-2xl border-none outline-none font-black text-xs ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}
+                  />
+                  <button 
+                    onClick={handleSend}
+                    className="p-4 bg-[#009865] text-white rounded-2xl hover:scale-105 transition-transform shadow-lg"
+                  >
+                    <Send className="w-5 h-5" />
+                  </button>
+                </div>
+                <button 
+                  onClick={handleEndSession}
+                  className="text-[10px] font-black text-red-500 uppercase tracking-widest self-center hover:underline"
+                >
+                  Encerrar Atendimento
+                </button>
+              </div>
             </div>
 
-            {/* Input */}
-            <div className={`p-4 flex items-center gap-2 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
-              <div className="flex-1 relative">
-                <textarea 
-                  rows={input.length > 30 ? 2 : 1}
-                  value={input} 
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-                  placeholder="Digite sua dúvida..." 
-                  className={`w-full border-none rounded-xl px-4 py-3 text-xs font-bold outline-none resize-none ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}
-                />
-              </div>
-              <button onClick={handleSend} className="p-3 bg-[#009865] text-white rounded-xl shadow-lg active:scale-90 transition-transform">
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
+            {/* Evaluation Overlay */}
+            <AnimatePresence>
+              {showEvaluation && (
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className={`absolute inset-0 z-50 flex flex-col items-center justify-center p-10 text-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
+                >
+                  <Star className="w-16 h-16 text-yellow-500 mb-6" />
+                  <h3 className={`text-2xl font-black mb-2 ${theme === 'dark' ? 'text-white' : 'text-[#004e3a]'}`}>Avalie o Atendimento</h3>
+                  <p className="text-[10px] text-gray-400 font-bold mb-8 uppercase tracking-widest">Sua opinião é fundamental</p>
+                  
+                  <div className="flex gap-2 mb-8">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <button key={s} onClick={() => setRating(s)} className={`p-2 transition-colors ${rating >= s ? 'text-yellow-500' : 'text-gray-200'}`}>
+                        <Star className={`w-8 h-8 ${rating >= s ? 'fill-current' : ''}`} />
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea 
+                    value={comment} onChange={(e) => setComment(e.target.value)}
+                    placeholder="Deixe seu comentário (opcional)"
+                    className={`w-full p-4 rounded-2xl border-none outline-none font-black text-xs mb-6 h-32 resize-none ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}
+                  />
+
+                  <button 
+                    onClick={submitEvaluation}
+                    className="w-full py-5 bg-[#009865] text-white rounded-[2rem] font-black shadow-xl"
+                  >
+                    Enviar Avaliação
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

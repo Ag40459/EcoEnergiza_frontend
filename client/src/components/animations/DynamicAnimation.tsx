@@ -1,131 +1,151 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Zap, AlertTriangle, Construction, Sun, Moon } from 'lucide-react';
-
-export type AnimationState = 'inactive' | 'progress' | 'active' | 'alert';
-export type AnimationType = 'generation' | 'consumption' | 'consultant';
+import { Sun, Zap, Home, Award, Factory, Plus, ChevronRight, Lock } from 'lucide-react';
 
 interface DynamicAnimationProps {
-  type: AnimationType;
-  state: AnimationState;
+  type: 'generation' | 'consumption' | 'consultant' | 'private_plant';
+  state: 'active' | 'inactive' | 'progress';
   label: string;
   value: string;
   unit: string;
-  onClick: () => void;
   isAtivo?: boolean;
+  onClick?: () => void;
 }
 
 export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({ 
-  type, 
-  state, 
-  label, 
-  value, 
-  unit, 
-  onClick, 
-  isAtivo = false 
+  type, state, label, value, unit, isAtivo = false, onClick 
 }) => {
-  const [isCiclo, setIsCiclo] = useState(false);
-  const [isNight, setIsNight] = useState(false);
+  const renderIcon = () => {
+    switch (type) {
+      case 'generation':
+        return (
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+            {/* Sol Pulsante */}
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-10 right-10"
+            >
+              <Sun className="w-16 h-16 text-yellow-500 fill-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.5)]" />
+            </motion.div>
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    setIsNight(hour < 6 || hour >= 18);
-  }, []);
+            {/* Placa Solar */}
+            <div className="relative mt-12">
+              <div className="w-48 h-32 bg-blue-900 rounded-xl border-4 border-gray-300 relative overflow-hidden transform skew-x-12">
+                <div className="absolute inset-0 grid grid-cols-4 grid-rows-3 gap-1 p-1">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div key={i} className="bg-blue-600/30 border border-blue-400/20"></div>
+                  ))}
+                </div>
+                {isAtivo && (
+                  <motion.div 
+                    animate={{ opacity: [0, 0.5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-white"
+                  />
+                )}
+              </div>
+              <div className="w-4 h-12 bg-gray-400 mx-auto mt-[-4px]"></div>
+              <div className="w-16 h-2 bg-gray-500 mx-auto rounded-full"></div>
+            </div>
 
-  const handleClick = () => {
-    if (isAtivo) {
-      setIsCiclo(!isCiclo);
-    } else {
-      onClick();
+            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md' : ''}`}>
+              <p className="text-3xl font-black text-[#004e3a] dark:text-white">{value} <span className="text-sm opacity-50">{unit}</span></p>
+            </div>
+          </div>
+        );
+      case 'consumption':
+        return (
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+            <div className="relative">
+              {/* Casa */}
+              <div className="relative w-40 h-40">
+                <div className="absolute bottom-0 w-full h-24 bg-orange-100 dark:bg-orange-900/20 rounded-lg border-4 border-orange-200 dark:border-orange-800"></div>
+                <div className="absolute top-4 left-0 right-0 h-20 bg-red-600 rounded-lg transform -rotate-45 translate-y-2 origin-bottom-left border-b-4 border-red-800"></div>
+                <div className="absolute top-4 left-0 right-0 h-20 bg-red-600 rounded-lg transform rotate-45 translate-y-2 origin-bottom-right border-b-4 border-red-800"></div>
+                
+                {/* Janelas com Luz */}
+                <motion.div 
+                  animate={{ backgroundColor: isAtivo ? ['#fef3c7', '#fcd34d', '#fef3c7'] : '#e5e7eb' }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute bottom-8 left-6 w-8 h-8 rounded-md border-2 border-orange-200"
+                />
+                <motion.div 
+                  animate={{ backgroundColor: isAtivo ? ['#fef3c7', '#fcd34d', '#fef3c7'] : '#e5e7eb' }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                  className="absolute bottom-8 right-6 w-8 h-8 rounded-md border-2 border-orange-200"
+                />
+              </div>
+            </div>
+            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md' : ''}`}>
+              <p className="text-3xl font-black text-[#004e3a] dark:text-white">{value} <span className="text-sm opacity-50">{unit}</span></p>
+            </div>
+          </div>
+        );
+      case 'consultant':
+        return (
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+            <div className="w-32 h-32 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4 relative">
+              <Award className="w-16 h-16 text-[#009865]" />
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-4 border-dashed border-[#009865] rounded-full"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-xl font-black text-[#004e3a] dark:text-white">Renda Extra</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Seja Consultor</p>
+            </div>
+          </div>
+        );
+      case 'private_plant':
+        return (
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+            <div className="w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-[2rem] flex items-center justify-center mb-4 relative">
+              <Factory className="w-16 h-16 text-blue-600" />
+              <motion.div 
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center"
+              >
+                <Plus className="w-5 h-5 text-blue-600" />
+              </motion.div>
+            </div>
+            <div className="text-center">
+              <p className="text-xl font-black text-[#004e3a] dark:text-white">Gestão Particular</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Cadastre sua Usina</p>
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
-  };
-
-  const getGif = () => {
-    if (type === 'generation') {
-      if (state === 'progress') return "/assets/gifs/usina_obra.gif";
-      if (state === 'alert') return "/assets/gifs/usina_alerta.gif";
-      return isNight ? "/assets/gifs/usina_noite.gif" : "/assets/gifs/usina_dia.gif";
-    }
-    if (type === 'consumption') {
-      if (state === 'progress') return "/assets/gifs/casa_obra.gif";
-      return isNight ? "/assets/gifs/casa_noite.gif" : "/assets/gifs/casa_dia.gif";
-    }
-    return "/assets/gifs/consultor.gif";
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 group cursor-pointer w-full max-w-[300px]" onClick={handleClick}>
-      <div className="relative w-64 h-64 flex items-center justify-center">
-        {/* GIF Principal - Nunca fica embaçado */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img 
-            src={getGif()} 
-            alt={label} 
-            className="w-full h-full object-contain"
-            onError={(e) => {
-              (e.target as any).style.display = 'none';
-              (e.target as any).nextSibling.style.display = 'flex';
-            }}
-          />
-          {/* Fallback visual se o GIF quebrar */}
-          <div className="hidden w-48 h-48 bg-green-50 dark:bg-green-900/10 rounded-full items-center justify-center border-4 border-dashed border-green-200 animate-pulse">
-             {type === 'generation' ? <Zap className="w-20 h-20 text-yellow-500" /> : <Construction className="w-20 h-20 text-blue-500" />}
-          </div>
-        </div>
-
-        {/* Elemento Celestial */}
-        <div className="absolute top-4 right-4 z-20">
-          {isNight ? <Moon className="text-blue-300 w-5 h-5" /> : <Sun className="text-yellow-400 w-5 h-5" />}
-        </div>
-
-        {/* Raios de Energia subindo (para usina ativa) */}
-        {type === 'generation' && state === 'active' && !isNight && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-            {[1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                initial={{ y: 100, opacity: 0, scale: 0.5 }}
-                animate={{ y: -100, opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                transition={{ duration: 4, repeat: Infinity, delay: i * 1.3 }}
-                className="absolute left-1/2 -translate-x-1/2 text-yellow-400"
-              >
-                <div className="flex flex-col items-center">
-                  <Zap className="w-6 h-6 fill-current" />
-                  <span className="text-[10px] font-black">+</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        {/* Overlay de Estado */}
-        {state === 'progress' && (
-          <div className="absolute top-0 left-0 right-0 flex justify-center z-20">
-            <div className="px-4 py-1 bg-blue-500 text-white text-[8px] font-black rounded-full uppercase tracking-widest shadow-lg">Em Obra</div>
-          </div>
-        )}
-        {state === 'alert' && (
-          <div className="absolute top-0 right-0 z-20">
-            <AlertTriangle className="w-8 h-8 text-red-500 animate-bounce" />
-          </div>
+    <motion.button
+      whileHover={{ scale: 1.02, y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="w-full max-w-sm aspect-square bg-white dark:bg-gray-800 rounded-[3rem] shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col relative group"
+    >
+      <div className="absolute top-8 left-8 z-10 flex items-center gap-2">
+        <span className="px-4 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-[10px] font-black text-[#004e3a] dark:text-green-400 uppercase tracking-widest border border-gray-100 dark:border-gray-700">
+          {label}
+        </span>
+        {!isAtivo && type !== 'consultant' && type !== 'private_plant' && (
+          <Lock className="w-3 h-3 text-gray-300" />
         )}
       </div>
+      
+      {renderIcon()}
 
-      {/* Caixa de Saldo - Fica embaçada se não estiver ativo */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-700 w-full text-center relative overflow-hidden group-hover:scale-105 transition-transform">
-        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{isCiclo ? "Total Ciclo" : label}</h4>
-        <div className="flex items-center justify-center gap-2">
-          {!isAtivo && <Lock className="w-3 h-3 text-gray-300" />}
-          <span className={`text-2xl font-black text-[#004e3a] dark:text-green-400 transition-all duration-500 ${!isAtivo ? 'blur-[8px] opacity-30' : ''}`}>
-            {value} <span className="text-xs opacity-50">{unit}</span>
-          </span>
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="px-6 py-2 bg-[#004e3a] text-white rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+          Ver Detalhes <ChevronRight className="w-3 h-3" />
         </div>
-        {!isAtivo && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-white/40 dark:bg-gray-800/40 backdrop-blur-[2px]">
-            <span className="text-[8px] font-black text-[#009865] uppercase tracking-tighter">Clique p/ Ativar</span>
-          </div>
-        )}
       </div>
-    </div>
+    </motion.button>
   );
 };
