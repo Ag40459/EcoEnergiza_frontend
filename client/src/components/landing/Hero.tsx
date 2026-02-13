@@ -44,20 +44,21 @@ export default function Hero() {
   return (
     <section
       id="inicio"
-      className="w-full h-full flex items-center justify-center p-6 lg:p-20"
+      className="w-full h-full flex items-center justify-center p-6 lg:p-20 overflow-hidden"
       style={{
         background: coresGradiente[corIndex],
         transition: "background 3s ease-in-out",
       }}
     >
-      <div className="w-full max-w-2xl lg:max-w-4xl flex flex-col lg:flex-row items-center gap-12">
+      <div className="w-full max-w-2xl lg:max-w-6xl flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
         <div className="flex-1 text-left">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="min-h-[140px] md:min-h-[180px] mb-6">
+            {/* Altura fixa para evitar pulos de layout */}
+            <div className="h-[140px] md:h-[180px] lg:h-[220px] mb-6 flex items-start">
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1]"
                 style={{ color: "#004e3a" }}
@@ -92,6 +93,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
+        {/* Mockup do Celular visível no Desktop */}
         <div className="hidden lg:block flex-1 relative">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -99,7 +101,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative z-10"
           >
-            <div className="w-[320px] h-[640px] bg-[#1a1a2e] rounded-[3rem] border-[8px] border-[#2a2a40] shadow-2xl overflow-hidden relative mx-auto">
+            <div className="w-[300px] h-[600px] bg-[#1a1a2e] rounded-[3rem] border-[8px] border-[#2a2a40] shadow-2xl overflow-hidden relative mx-auto">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#2a2a40] rounded-b-2xl z-20"></div>
               <div className="w-full h-full bg-white p-6 pt-10">
                 <div className="flex items-center justify-between mb-8">
@@ -136,14 +138,14 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className="absolute -left-12 top-20 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 border border-gray-100">
+              <div className="absolute -left-10 top-20 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 border border-gray-100">
                 <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
                   <span className="text-yellow-600 text-[10px]">⚡</span>
                 </div>
                 <span className="text-[10px] font-bold text-[#004e3a]">5.8 kWh</span>
               </div>
 
-              <div className="absolute -left-8 bottom-32 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 border border-gray-100">
+              <div className="absolute -left-6 bottom-32 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 border border-gray-100">
                 <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
                   <span className="text-green-600 text-[10px]">✓</span>
                 </div>
