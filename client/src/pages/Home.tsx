@@ -11,6 +11,7 @@ export default function Home() {
   const [loginAberto, setLoginAberto] = useState(false);
   const [initialStep, setInitialStep] = useState<"email" | "code" | "other">("email");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [consultantModalOpen, setConsultantModalOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
@@ -37,7 +38,7 @@ export default function Home() {
   if (isLoggedIn) {
     return (
       <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <MainDashboard onLogout={() => setIsLoggedIn(false)} theme={theme} toggleTheme={toggleTheme} onOpenConsultant={() => setConsultantModalOpen(true)} />
+        <MainDashboard onLogout={() => { setIsLoggedIn(false); setIsAdmin(false); }} theme={theme} toggleTheme={toggleTheme} onOpenConsultant={() => setConsultantModalOpen(true)} isAdmin={isAdmin} />
         <AICopilot theme={theme} />
         <ConsultantModal 
           isOpen={consultantModalOpen} 
@@ -61,7 +62,7 @@ export default function Home() {
         <div className="h-[350px] border-t border-gray-100 dark:border-gray-800 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-gray-800/30">
           <LoginForm 
             initialStep={initialStep}
-            onLoginSuccess={() => setIsLoggedIn(true)}
+            onLoginSuccess={(isAdmin) => { setIsLoggedIn(true); setIsAdmin(isAdmin); }}
             onOpenOther={() => setInitialStep("other")}
             embedded={true}
           />
@@ -74,7 +75,7 @@ export default function Home() {
             <LoginForm 
               initialStep={initialStep} 
               onClose={() => setLoginAberto(false)} 
-              onLoginSuccess={() => setIsLoggedIn(true)}
+              onLoginSuccess={(isAdm) => { setIsLoggedIn(true); setIsAdmin(isAdm); }}
               onOpenOther={() => setInitialStep("other")}
             />
           </div>

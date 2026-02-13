@@ -114,7 +114,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
 
       <ContentModal isOpen={modalSolucoes} onClose={() => setModalSolucoes(false)} title="Nossas Soluções" items={solucoesData} />
       <ContentModal isOpen={modalSobre} onClose={() => setModalSobre(false)} title="Sobre a EcoEnergiza" items={sobreData} />
-      <ContactModal isOpen={modalContato} onClose={() => setContactOpen(true)} />
+      <ContactModal isOpen={modalContato} onClose={() => setModalContato(false)} />
     </>
   );
 }
