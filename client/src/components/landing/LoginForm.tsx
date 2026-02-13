@@ -31,20 +31,11 @@ export default function LoginForm({
     e.preventDefault();
     if (email.trim()) {
       setLoading(true);
-      try {
-        const res = await fetch('/api/auth/send-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        if (res.ok) setStep("code");
-      } catch (err) {
-        console.error("Erro ao enviar email", err);
-        // Fallback para teste se o servidor não estiver rodando
+      // Simulação de delay para feedback visual
+      setTimeout(() => {
         setStep("code");
-      } finally {
         setLoading(false);
-      }
+      }, 800);
     }
   };
 
@@ -60,111 +51,129 @@ export default function LoginForm({
     }
   };
 
-  const content = (
+  const renderContent = () => (
     <div className="flex flex-col items-center w-full max-w-sm mx-auto">
-      <div className="mb-6 text-center w-full">
-        <h3 className="text-2xl font-black mb-2 pt-4 text-[#004e3a] dark:text-green-400">
+      <div className="mb-4 text-center w-full">
+        <h3 className="text-xl font-black text-[#004e3a] dark:text-green-400">
           Acesse sua Conta
         </h3>
       </div>
 
-      {step === "email" && (
-        <form onSubmit={handleEmailSubmit} className="w-full space-y-6">
-          <input
-            type="email"
-            placeholder="seu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 focus:bg-white dark:focus:bg-gray-700 outline-none text-center font-bold dark:text-white"
-          />
-          <button
-            type="submit"
-            disabled={loading || !email.trim()}
-            className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl disabled:opacity-40"
+      <AnimatePresence mode="wait">
+        {step === "email" && (
+          <motion.form 
+            key="email-step"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+            onSubmit={handleEmailSubmit} className="w-full space-y-4"
           >
-            {loading ? "Enviando..." : "Enviar Código"} <ArrowRight className="w-5 h-5" />
-          </button>
-          <div className="mt-8 text-center">
-            <button 
-              type="button"
-              onClick={() => onOpenOther ? onOpenOther() : setStep("other")}
-              className="text-sm font-black underline text-[#009865]"
+            <input
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 focus:bg-white dark:focus:bg-gray-700 outline-none text-center font-bold dark:text-white"
+            />
+            <button
+              type="submit"
+              disabled={loading || !email.trim()}
+              className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl disabled:opacity-40"
             >
-              Acesse de outra forma
+              {loading ? "Enviando..." : "Enviar Código"} <ArrowRight className="w-5 h-5" />
             </button>
-          </div>
-        </form>
-      )}
+            <div className="text-center">
+              <button 
+                type="button"
+                onClick={() => onOpenOther ? onOpenOther() : setStep("other")}
+                className="text-xs font-black underline text-[#009865]"
+              >
+                Acesse de outra forma
+              </button>
+            </div>
+          </motion.form>
+        )}
 
-      {step === "other" && (
-        <div className="w-full space-y-4">
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center font-bold dark:text-white"
-          />
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center font-bold dark:text-white"
-          />
-          <button onClick={handlePasswordSubmit} className="w-full py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl">
-            Confirmar
-          </button>
-          <button onClick={() => setStep("email")} className="w-full text-xs font-black underline text-[#009865] mt-4">
-            Voltar para E-mail
-          </button>
-        </div>
-      )}
+        {step === "other" && (
+          <motion.div 
+            key="other-step"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+            className="w-full space-y-4"
+          >
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center font-bold dark:text-white"
+            />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-4 rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center font-bold dark:text-white"
+            />
+            <button onClick={handlePasswordSubmit} className="w-full py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl">
+              Confirmar
+            </button>
+            <button onClick={() => setStep("email")} className="w-full text-xs font-black underline text-[#009865] mt-2">
+              Voltar para E-mail
+            </button>
+          </motion.div>
+        )}
 
-      {step === "code" && (
-        <div className="w-full text-center space-y-6">
-          <div className="flex justify-center gap-3">
-            {code.map((digit, index) => (
-              <input 
-                key={index} 
-                id={`code-${index}`} 
-                type="text" 
-                inputMode="numeric" 
-                pattern="[0-9]*"
-                maxLength={1} 
-                value={digit}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, '');
-                  const newCode = [...code];
-                  newCode[index] = val;
-                  setCode(newCode);
-                  if (val && index < 3) document.getElementById(`code-${index+1}`)?.focus();
-                }}
-                className="w-14 h-14 text-center text-2xl font-black rounded-2xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 outline-none dark:text-white"
-              />
-            ))}
-          </div>
-          <button onClick={handleCodeSubmit} className="w-full py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl">
-            Confirmar Acesso
-          </button>
-        </div>
-      )}
+        {step === "code" && (
+          <motion.div 
+            key="code-step"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+            className="w-full text-center space-y-6"
+          >
+            <p className="text-xs font-bold text-gray-400">Insira os 4 dígitos enviados para {email}</p>
+            <div className="flex justify-center gap-3">
+              {code.map((digit, index) => (
+                <input 
+                  key={index} 
+                  id={`code-${index}`} 
+                  type="text" 
+                  inputMode="numeric" 
+                  pattern="[0-9]*"
+                  maxLength={1} 
+                  value={digit}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    const newCode = [...code];
+                    newCode[index] = val;
+                    setCode(newCode);
+                    if (val && index < 3) document.getElementById(`code-${index+1}`)?.focus();
+                  }}
+                  className="w-12 h-12 text-center text-xl font-black rounded-xl border-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 outline-none dark:text-white"
+                />
+              ))}
+            </div>
+            <button onClick={handleCodeSubmit} className="w-full py-4 rounded-2xl font-black text-white bg-[#009865] shadow-xl">
+              Confirmar Acesso
+            </button>
+            <button onClick={() => setStep("email")} className="w-full text-xs font-black underline text-[#009865]">
+              Reenviar código
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 
-  if (embedded) return content;
+  if (embedded) return renderContent();
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-gray-900 rounded-[3rem] p-10 max-w-md w-full relative shadow-2xl"
+        className="bg-white dark:bg-gray-900 rounded-[3rem] p-8 max-w-md w-full relative shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors z-10">
           <X className="w-6 h-6 text-gray-400" />
         </button>
-        {content}
+        {renderContent()}
       </motion.div>
     </div>
   );

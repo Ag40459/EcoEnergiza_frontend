@@ -37,7 +37,7 @@ export default function Home() {
   if (isLoggedIn) {
     return (
       <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <MainDashboard onLogout={() => setIsLoggedIn(false)} theme={theme} toggleTheme={toggleTheme} />
+        <MainDashboard onLogout={() => setIsLoggedIn(false)} theme={theme} toggleTheme={toggleTheme} onOpenConsultant={() => setConsultantModalOpen(true)} />
         <AICopilot theme={theme} />
         <ConsultantModal 
           isOpen={consultantModalOpen} 
@@ -51,13 +51,14 @@ export default function Home() {
     <div className={`h-screen w-screen flex flex-col overflow-hidden fixed inset-0 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <Navbar onOpenLogin={() => abrirLogin("email")} theme={theme} toggleTheme={toggleTheme} />
       
-      <div className="flex-1 flex flex-col lg:flex-row pt-20 lg:pt-0 overflow-hidden">
+      <div className="flex-1 flex flex-col pt-20 overflow-hidden">
+        {/* Parte Superior: Texto Digitado / Hero */}
         <div className="flex-1 overflow-hidden">
           <Hero onStart={() => abrirLogin("email")} />
         </div>
         
-        {/* Layout Dividido: Login sempre visível no desktop ao lado do Hero */}
-        <div className="hidden lg:flex w-[450px] border-l border-gray-100 dark:border-gray-800 items-center justify-center p-8 bg-gray-50/50 dark:bg-gray-800/30">
+        {/* Parte Inferior: Input de Login Dividindo a Tela */}
+        <div className="h-[350px] border-t border-gray-100 dark:border-gray-800 flex items-center justify-center p-8 bg-gray-50/50 dark:bg-gray-800/30">
           <LoginForm 
             initialStep={initialStep}
             onLoginSuccess={() => setIsLoggedIn(true)}
@@ -68,7 +69,7 @@ export default function Home() {
       </div>
 
       <AnimatePresence>
-        {loginAberto && (
+        {loginAberto && !isLoggedIn && (
           <div className="lg:hidden">
             <LoginForm 
               initialStep={initialStep} 
