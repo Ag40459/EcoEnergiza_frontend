@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Award, Zap, Coins, User, FileText, Settings, Users, Calendar, BarChart3, X } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
+import { BusinessModal } from '../modals/BusinessModals';
 
 interface UserProfile {
   nome: string;
@@ -23,6 +24,7 @@ export default function MainDashboard() {
   });
 
   const [showAdminModal, setShowAdminModal] = useState(user.isAdmin);
+  const [activeModal, setActiveModal] = useState<'generation' | 'consumption' | null>(null);
 
   const adminOptions = [
     { titulo: "Alterar Textos", icone: FileText, cor: "#009865" },
@@ -34,7 +36,6 @@ export default function MainDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navbar do Dashboard */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 px-6">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -63,27 +64,22 @@ export default function MainDashboard() {
         </div>
       </nav>
 
-      {/* Conteúdo Principal */}
       <main className="flex-1 pt-24 pb-12 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-          <DynamicAnimation type="generation" state="active" label="Geração de Hoje" value="4.2" unit="kWh" />
-          <DynamicAnimation type="consumption" state="inactive" label="Consumo da Casa" value="--" unit="kWh" />
-          <DynamicAnimation type="consultant" state="active" label="Painel Consultor" value="CRM" unit="Ativo" />
+          <DynamicAnimation type="generation" state="active" label="Geração de Hoje" value="4.2" unit="kWh" onClick={() => setActiveModal('generation')} />
+          <DynamicAnimation type="consumption" state="inactive" label="Consumo da Casa" value="--" unit="kWh" onClick={() => setActiveModal('consumption')} />
+          <DynamicAnimation type="consultant" state="active" label="Painel Consultor" value="CRM" unit="Ativo" onClick={() => setShowAdminModal(true)} />
         </div>
       </main>
 
-      {/* Modal ADM Inicial */}
+      <BusinessModal isOpen={!!activeModal} onClose={() => setActiveModal(null)} type={activeModal || 'generation'} />
+
       <AnimatePresence>
         {showAdminModal && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-[3rem] w-full max-w-xl p-10 shadow-2xl relative">
               <button onClick={() => setShowAdminModal(false)} className="absolute top-8 right-8 p-2 hover:bg-gray-100 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
-              
-              <div className="text-center mb-10">
-                <h2 className="text-2xl font-black text-[#004e3a]">Painel Administrativo</h2>
-                <p className="text-xs font-bold text-gray-400 mt-2 uppercase tracking-widest">Escolha uma área para gerenciar</p>
-              </div>
-
+              <div className="text-center mb-10"><h2 className="text-2xl font-black text-[#004e3a]">Painel Administrativo</h2></div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {adminOptions.map((opt, idx) => (
                   <button key={idx} onClick={() => setShowAdminModal(false)} className="flex items-center gap-4 p-6 rounded-[2rem] border border-gray-100 text-left hover:bg-green-50 transition-all group">
