@@ -22,9 +22,12 @@ export default function Home() {
           <Hero onStart={() => abrirLogin("email")} />
         </div>
         
-        {/* LoginForm visível apenas no Mobile - Área aumentada em 15% (de 30vh para 45vh) */}
+        {/* LoginForm visível apenas no Mobile - Apenas passo de email inicial */}
         <div className="h-[45vh] lg:hidden w-full bg-white border-t border-gray-100 px-6 flex items-center justify-center overflow-hidden">
-          <LoginForm isMobile={true} />
+          <LoginForm 
+            isMobile={true} 
+            onOpenOther={() => abrirLogin("other")}
+          />
         </div>
       </div>
 

@@ -6,9 +6,10 @@ interface LoginFormProps {
   isMobile?: boolean;
   onClose?: () => void;
   initialStep?: "email" | "code" | "other";
+  onOpenOther?: () => void;
 }
 
-export default function LoginForm({ isMobile = false, onClose, initialStep = "email" }: LoginFormProps) {
+export default function LoginForm({ isMobile = false, onClose, initialStep = "email", onOpenOther }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"email" | "code" | "other">(initialStep);
   const [code, setCode] = useState(["", "", "", ""]);
@@ -47,10 +48,6 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-sm"
     >
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold" style={{ color: "#004e3a" }}>Acesse sua conta</h2>
-        <p className="text-sm opacity-70 mt-2">Insira seu e-mail para receber o código de acesso</p>
-      </div>
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <input
           type="email"
@@ -74,11 +71,17 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
       </form>
       <div className="mt-4 text-center">
         <button 
-          onClick={() => setStep("other")}
+          onClick={() => {
+            if (isMobile && onOpenOther) {
+              onOpenOther();
+            } else {
+              setStep("other");
+            }
+          }}
           className="text-xs font-bold underline" 
           style={{ color: "#009865" }}
         >
-          Acesse de outra forma
+          Acesse sua conta
         </button>
       </div>
     </motion.div>
@@ -179,12 +182,10 @@ export default function LoginForm({ isMobile = false, onClose, initialStep = "em
     </motion.div>
   );
 
-  if (isMobile) {
+  if (isMobile && step === "email") {
     return (
       <div className="w-full px-4 flex flex-col items-center">
-        {step === "email" && renderEmailStep()}
-        {step === "code" && renderCodeStep()}
-        {step === "other" && renderOtherStep()}
+        {renderEmailStep()}
       </div>
     );
   }
