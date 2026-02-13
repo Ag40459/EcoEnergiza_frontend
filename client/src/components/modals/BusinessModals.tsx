@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Zap, ArrowRight, CheckCircle, Shield, TrendingUp, 
-  DollarSign, Cpu, Wifi, MapPin, ChevronLeft, ChevronRight, Share2, Info
+  DollarSign, Cpu, Wifi, MapPin, ChevronLeft, ChevronRight, Share2, Info,
+  Smartphone, CreditCard, Landmark, QrCode, ShoppingCart, Truck
 } from 'lucide-react';
 
 interface ModalProps {
@@ -16,25 +17,38 @@ interface ModalProps {
 export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActivate }) => {
   const [step, setStep] = useState(1);
   const [kw, setKw] = useState('');
-  const [currentEquip, setCurrentEquip] = useState(0);
-
-  const equipamentos = [
-    { nome: "Painel Solar Premium 550W", desc: "Alta eficiência monocristalina com tecnologia Half-Cell.", img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800" },
-    { nome: "Inversor Inteligente 5kW", desc: "Monitoramento em tempo real via Wi-Fi e IA integrada.", img: "https://images.unsplash.com/photo-1592833159155-c62df1b65634?q=80&w=800" }
-  ];
+  const [checkoutStep, setCheckoutStep] = useState<'budget' | 'payment' | 'success'>('budget');
+  const [paymentMethod, setPaymentMethod] = useState('');
 
   if (!isOpen) return null;
+
+  const handleConfirmBudget = () => {
+    setStep(3); // Vai para o checkout
+  };
+
+  const handlePayment = (method: string) => {
+    setPaymentMethod(method);
+    if (method === 'financiamento') {
+      alert("Redirecionando para o Santander para análise de crédito e KYC...");
+    } else {
+      setCheckoutStep('success');
+      setTimeout(() => {
+        onActivate?.();
+        onClose();
+      }, 3000);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
         
-        {step === 1 ? (
+        {step === 1 && (
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Geração de Energia</h2>
-              <p className="text-sm font-bold text-gray-400 mt-2 uppercase tracking-widest">Configure sua usina remota</p>
+              <p className="text-sm font-bold text-gray-400 mt-2 uppercase tracking-widest">Quanto você deseja contratar?</p>
             </div>
             <div className="flex flex-col items-center gap-6">
               <div className="relative w-full">
@@ -44,63 +58,82 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
                 />
                 <span className="absolute right-10 top-1/2 -translate-y-1/2 text-xl font-black text-gray-300">kW</span>
               </div>
-              <div className="grid grid-cols-2 gap-4 w-full">
-                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl flex flex-col items-center gap-2">
-                  <Shield className="w-5 h-5 text-green-500" />
-                  <span className="text-[10px] font-black uppercase text-gray-400">Segurança Total</span>
-                </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl flex flex-col items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-500" />
-                  <span className="text-[10px] font-black uppercase text-gray-400">ROI Garantido</span>
-                </div>
-              </div>
               <button 
                 onClick={() => setStep(2)} disabled={!kw}
                 className="w-full py-5 bg-[#009865] text-white rounded-2xl font-black shadow-xl disabled:opacity-50 active:scale-95 transition-transform"
               >
-                Ver Proposta Detalhada
+                Gerar Orçamento Agora
               </button>
             </div>
           </div>
-        ) : (
+        )}
+
+        {step === 2 && (
           <div className="space-y-8">
             <div className="flex items-center gap-3">
               <button onClick={() => setStep(1)} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><ChevronLeft className="w-4 h-4" /></button>
-              <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Sua Usina Ideal</h2>
+              <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Seu Orçamento</h2>
             </div>
 
-            {/* Carrossel de Equipamentos */}
-            <div className="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-[2.5rem] overflow-hidden group">
-              <img src={equipamentos[currentEquip].img} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
-                <h3 className="text-white text-xl font-black">{equipamentos[currentEquip].nome}</h3>
-                <p className="text-white/70 text-xs font-medium mt-2">{equipamentos[currentEquip].desc}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-6 bg-green-50 dark:bg-green-900/10 rounded-[2rem] border border-green-100 dark:border-green-900/30 space-y-2">
+                <p className="text-[10px] font-black text-gray-400 uppercase">Geração Mensal Média</p>
+                <p className="text-2xl font-black text-[#004e3a] dark:text-white">{Number(kw) * 125} kWh</p>
               </div>
-              <div className="absolute inset-y-0 left-4 flex items-center">
-                <button onClick={() => setCurrentEquip(prev => (prev > 0 ? prev - 1 : equipamentos.length - 1))} className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors"><ChevronLeft /></button>
-              </div>
-              <div className="absolute inset-y-0 right-4 flex items-center">
-                <button onClick={() => setCurrentEquip(prev => (prev < equipamentos.length - 1 ? prev + 1 : 0))} className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors"><ChevronRight /></button>
+              <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-[2rem] space-y-2">
+                <p className="text-[10px] font-black text-gray-400 uppercase">Equipamentos</p>
+                <p className="text-sm font-bold text-[#004e3a] dark:text-white">{Math.ceil(Number(kw)/0.5)} Placas + Inversores</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="p-6 bg-green-50 dark:bg-green-900/10 rounded-[2rem] border border-green-100 dark:border-green-900/30 space-y-4">
-                <div className="flex justify-between items-center"><span className="text-sm font-bold text-gray-500">Investimento Estimado</span><span className="text-xl font-black text-[#004e3a] dark:text-green-400">R$ {(Number(kw) * 4500).toLocaleString()}</span></div>
-                <div className="flex justify-between items-center"><span className="text-sm font-bold text-gray-500">Economia em 10 anos</span><span className="text-xl font-black text-[#009865]">R$ {(Number(kw) * 5400).toLocaleString()}</span></div>
-                <div className="flex justify-between items-center"><span className="text-sm font-bold text-gray-500">Payback (Retorno)</span><span className="text-xl font-black text-[#009865]">2.1 Anos</span></div>
+            <div className="p-8 bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-700 space-y-6">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-bold text-gray-500">Valor Total</span>
+                <span className="text-2xl font-black text-[#009865]">R$ {(Number(kw) * 4500).toLocaleString()}</span>
               </div>
+              <div className="flex justify-between items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl">
+                <span className="text-xs font-bold text-[#004e3a] dark:text-green-400">Ou em 84x de</span>
+                <span className="text-lg font-black text-[#004e3a] dark:text-green-400">R$ {((Number(kw) * 4500 * 1.8) / 84).toFixed(2)}</span>
+              </div>
+              <p className="text-[10px] text-gray-400 font-bold text-center italic">Parcelas menores que sua conta de luz atual!</p>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
-                <Info className="w-5 h-5 text-[#009865] shrink-0" />
-                <p className="text-[10px] font-bold text-gray-500 leading-relaxed">Esta proposta é uma estimativa baseada no seu consumo. O valor final pode variar após análise técnica da área de instalação remota.</p>
+              <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-2xl">
+                <Landmark className="w-5 h-5 text-blue-500 shrink-0" />
+                <p className="text-[10px] font-bold text-blue-600 leading-relaxed">Pode ser financiado pelos bancos tradicionais ou direto pelo app via Santander.</p>
               </div>
-              <div className="flex gap-4">
-                <button onClick={() => { onActivate?.(); onClose(); }} className="flex-1 py-5 bg-[#009865] text-white rounded-[2rem] font-black shadow-xl active:scale-95 transition-transform">Confirmar e Ativar</button>
-                <button onClick={() => alert("Link da proposta copiado!")} className="p-5 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-[2rem] hover:bg-gray-200 transition-colors"><Share2 className="w-6 h-6" /></button>
-              </div>
+              <button onClick={handleConfirmBudget} className="w-full py-5 bg-[#009865] text-white rounded-[2rem] font-black shadow-xl active:scale-95 transition-transform">Adquirir Agora</button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Finalizar Aquisição</h2>
+              <p className="text-sm font-bold text-gray-400">Escolha a melhor forma de pagamento</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              {[
+                { id: 'pix', label: 'Pix (Aprovação Imediata)', icon: QrCode },
+                { id: 'cartao', label: 'Cartão de Crédito', icon: CreditCard },
+                { id: 'financiamento', label: 'Financiamento Santander', icon: Landmark },
+                { id: 'comodato', label: 'Comodato (Lista de Espera)', icon: Smartphone },
+              ].map((method) => (
+                <button 
+                  key={method.id}
+                  onClick={() => handlePayment(method.id)}
+                  className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl hover:border-[#009865] border-2 border-transparent transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <method.icon className="w-6 h-6 text-[#009865]" />
+                    <span className="font-black text-sm text-[#004e3a] dark:text-white">{method.label}</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300" />
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -110,6 +143,18 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
 };
 
 export const ConsumptionModal: React.FC<ModalProps> = ({ isOpen, onClose, onActivate, isAtivo }) => {
+  const [purchaseComplete, setPurchaseComplete] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (purchaseComplete && progress < 100) {
+      const timer = setInterval(() => {
+        setProgress(prev => Math.min(prev + 10, 100));
+      }, 500);
+      return () => clearInterval(timer);
+    }
+  }, [purchaseComplete, progress]);
+
   if (!isOpen) return null;
 
   return (
@@ -117,45 +162,67 @@ export const ConsumptionModal: React.FC<ModalProps> = ({ isOpen, onClose, onActi
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
 
-        {!isAtivo ? (
+        {!isAtivo && !purchaseComplete ? (
           <div className="space-y-8">
             <div className="text-center">
               <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Controle seu Consumo</h2>
-              <p className="text-sm font-bold text-gray-400 mt-2">Conecte sua casa ao nosso ecossistema inteligente</p>
+              <p className="text-sm font-bold text-gray-400 mt-2">Saldo embaçado? Conecte seu medidor inteligente.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-8 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 hover:border-[#009865] transition-all group">
                 <div className="w-12 h-12 bg-green-50 dark:bg-green-900/20 rounded-2xl flex items-center justify-center mb-4"><Cpu className="text-[#009865]" /></div>
-                <h3 className="font-black text-[#004e3a] dark:text-white mb-2">Smart Meter (Compra)</h3>
-                <p className="text-xs text-gray-500 font-bold mb-4">Equipamento próprio com gestão completa.</p>
-                <p className="text-2xl font-black text-[#009865] mb-6">$79,90</p>
-                <button onClick={() => { onActivate?.(); onClose(); }} className="w-full py-3 bg-[#009865] text-white rounded-xl font-black text-xs uppercase tracking-widest">Comprar Agora</button>
+                <h3 className="font-black text-[#004e3a] dark:text-white mb-2">Smart Meter</h3>
+                <p className="text-xs text-gray-500 font-bold mb-4">Conectividade direta com nosso App.</p>
+                <div className="space-y-1 mb-6">
+                  <p className="text-2xl font-black text-[#009865]">$79,90 <span className="text-xs opacity-50">à vista</span></p>
+                  <p className="text-[10px] font-bold text-gray-400">ou 1+9 de $9,90 no comodato</p>
+                </div>
+                <button onClick={() => setPurchaseComplete(true)} className="w-full py-3 bg-[#009865] text-white rounded-xl font-black text-xs uppercase tracking-widest">Adquirir Agora</button>
               </div>
 
-              <div className="p-8 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 hover:border-[#004e3a] transition-all group">
-                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4"><Wifi className="text-[#004e3a]" /></div>
-                <h3 className="font-black text-[#004e3a] dark:text-white mb-2">Comodato</h3>
-                <p className="text-xs text-gray-500 font-bold mb-4">Assinatura mensal sem custo de adesão.</p>
-                <p className="text-2xl font-black text-[#004e3a] dark:text-white mb-6">$9,90 <span className="text-[10px] opacity-50">/mês</span></p>
-                <button onClick={() => { onActivate?.(); onClose(); }} className="w-full py-3 bg-[#004e3a] text-white rounded-xl font-black text-xs uppercase tracking-widest">Assinar Comodato</button>
+              <div className="p-8 bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] flex flex-col justify-center items-center text-center gap-4">
+                <Wifi className="w-10 h-10 text-gray-300" />
+                <p className="text-xs font-bold text-gray-400">Já possui acesso remoto ao seu contador?</p>
+                <button className="text-xs font-black text-[#009865] underline uppercase tracking-tighter">Conectar Agora</button>
               </div>
+            </div>
+          </div>
+        ) : purchaseComplete ? (
+          <div className="text-center space-y-8 py-10">
+            <div className="relative w-32 h-32 mx-auto">
+              <Truck className="w-full h-full text-[#009865] animate-bounce" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Pedido em Caminho!</h2>
+              <p className="text-xs font-bold text-gray-400">Acompanhe a entrega e instalação do seu Smart Meter</p>
+            </div>
+            
+            <div className="w-full bg-gray-100 dark:bg-gray-800 h-4 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }} animate={{ width: `${progress}%` }}
+                className="h-full bg-[#009865] shadow-[0_0_20px_rgba(0,152,101,0.5)]"
+              />
+            </div>
+            
+            <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase">
+              <span>Pedido</span>
+              <span>Envio</span>
+              <span>Instalação</span>
             </div>
 
-            <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-3xl flex items-center gap-4">
-              <MapPin className="text-[#009865] w-6 h-6" />
-              <div>
-                <p className="text-xs font-black text-[#004e3a] dark:text-white">Já tem acesso remoto?</p>
-                <p className="text-[10px] font-bold text-gray-400">Conecte seu medidor digital compatível</p>
-              </div>
-              <button className="ml-auto text-xs font-black text-[#009865] underline">Conectar</button>
-            </div>
+            <button 
+              onClick={() => { onActivate?.(); onClose(); }}
+              className="w-full py-4 bg-[#004e3a] text-white rounded-2xl font-black mt-8"
+            >
+              Ir para Cadastro Completo (Segurança)
+            </button>
           </div>
         ) : (
           <div className="text-center space-y-6">
             <CheckCircle className="w-20 h-20 text-[#009865] mx-auto" />
-            <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Acesso Ativo!</h2>
-            <p className="text-sm font-bold text-gray-400">Você já está monitorando sua residência em tempo real.</p>
+            <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Monitoramento Ativo</h2>
+            <p className="text-sm font-bold text-gray-400">Clique para alternar entre saldo atual e ciclo total.</p>
             <button onClick={onClose} className="w-full py-4 bg-[#009865] text-white rounded-2xl font-black">Voltar ao Dashboard</button>
           </div>
         )}

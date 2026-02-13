@@ -57,6 +57,19 @@ export default function ConsumodaCasa({
       onClick={onClick}
     >
       <div className="relative w-full h-full flex flex-col items-center justify-center gap-4 p-6">
+        {isLoading && (
+          <div className="absolute top-4 left-0 right-0 px-6 z-10">
+            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }} 
+                animate={{ width: `${progress}%` }}
+                className="h-full bg-[#009865]"
+              />
+            </div>
+            <p className="text-[8px] font-black text-center mt-1 text-gray-400 uppercase tracking-tighter">Instalação em progresso...</p>
+          </div>
+        )}
+
         <svg
           className="w-32 h-32"
           viewBox="0 0 200 200"
@@ -138,23 +151,6 @@ export default function ConsumodaCasa({
           <p className="text-3xl font-bold text-red-600">{displayValue.toFixed(1)} kWh</p>
           <p className="text-xs text-gray-400 mt-1">Residência Principal</p>
         </motion.div>
-
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
-              <motion.div
-                className="w-12 h-12 bg-blue-500 rounded-full"
-                animate={{ x: [-20, 20] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
-              />
-              <motion.div
-                className="w-12 h-12 bg-blue-600 rounded-full"
-                animate={{ x: [20, -20] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
-              />
-            </div>
-          </div>
-        )}
       </div>
     </AnimationCard>
   );

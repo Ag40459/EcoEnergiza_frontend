@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Send, X, Trash2, Mail, Sparkles, ChevronLeft, Bot } from 'lucide-react';
+import { Send, X, Bot, Sparkles, ChevronLeft, Trash2, Mail } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -9,14 +9,32 @@ interface Message {
   timestamp: Date;
 }
 
-export default function AICopilot({ theme = 'light' }: { theme?: 'light' | 'dark' }) {
+interface AICopilotProps {
+  theme?: 'light' | 'dark';
+  isConsultant?: boolean;
+}
+
+export default function AICopilot({ theme = 'light', isConsultant = false }: AICopilotProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '1', text: "Olá! Sou seu Copiloto IA. Como posso ajudar com seus leads ou orçamentos hoje?", sender: 'ai', timestamp: new Date() }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      const initialText = isConsultant 
+        ? "Olá, Consultor! Estou aqui para ajudar você a gerir seus leads e otimizar suas vendas de energia. Como posso ajudar hoje?"
+        : "Olá! Sou o assistente da EcoEnergiza. Posso te ajudar a entender seu consumo, contratar geração de energia ou tirar dúvidas sobre o app. O que você precisa?";
+      
+      setMessages([{ 
+        id: '1', 
+        text: initialText, 
+        sender: 'ai', 
+        timestamp: new Date() 
+      }]);
+    }
+  }, [isOpen, isConsultant]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -24,33 +42,29 @@ export default function AICopilot({ theme = 'light' }: { theme?: 'light' | 'dark
     }
   }, [messages]);
 
-  // Fechar ao clicar fora
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
-
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg: Message = { id: Date.now().toString(), text: input, sender: 'user', timestamp: new Date() };
     setMessages(prev => [...prev, userMsg]);
+    const currentInput = input;
     setInput("");
 
-    // Simulação de resposta da IA conforme as regras
     setTimeout(() => {
-      let response = "Interessante! Estou analisando os dados para te dar a melhor resposta.";
-      if (input.toLowerCase().includes("solar")) {
-        response = "Aqui está um script para cliente comercial: 'Olá! Notei que sua empresa tem um custo fixo alto com energia. Sabia que a usina remota da Ecolote pode reduzir isso em até 30% sem investimento inicial?'";
-      } else if (input.toLowerCase().includes("follow-up")) {
-        response = "O João viu o orçamento há 2 dias. Recomendo um follow-up via WhatsApp agora!";
+      let response = "Desculpe, ainda estou aprendendo sobre isso. Pode tentar perguntar de outra forma?";
+      const lowerInput = currentInput.toLowerCase();
+      
+      if (lowerInput.includes('consultor')) {
+        response = "Para se tornar um consultor EcoEnergiza, você pode acessar a aba 'Seja Consultor' no seu dashboard. Lá explicamos todas as fases e benefícios! [Clique aqui para ir para Consultor]";
+      } else if (lowerInput.includes('consumo') || lowerInput.includes('casa')) {
+        response = "Você pode ver o consumo da sua casa clicando no card 'Consumo da Casa' no início do seu dashboard. Se o saldo estiver embaçado, você precisará adquirir um Smart Meter. [Ver Consumo]";
+      } else if (lowerInput.includes('geração') || lowerInput.includes('usina') || lowerInput.includes('contratar')) {
+        response = "Para contratar geração de energia, clique em 'Geração de Energia' no dashboard. Você poderá simular quantos kW precisa e ver um orçamento detalhado na hora! [Contratar Geração]";
+      } else if (lowerInput.includes('moeda') || lowerInput.includes('eco')) {
+        response = "As moedas ECO são nosso programa de recompensas. Você pode ver seu saldo e histórico clicando no ícone da carteira no topo do app. [Minha Carteira]";
+      } else if (isConsultant && (lowerInput.includes('lead') || lowerInput.includes('venda'))) {
+        response = "Como consultor, você tem acesso a ferramentas exclusivas de CRM e materiais de marketing no seu painel administrativo. Como posso ajudar com seus leads hoje?";
       }
+
       const aiMsg: Message = { id: (Date.now() + 1).toString(), text: response, sender: 'ai', timestamp: new Date() };
       setMessages(prev => [...prev, aiMsg]);
     }, 1000);
@@ -77,16 +91,19 @@ export default function AICopilot({ theme = 'light' }: { theme?: 'light' | 'dark
             {/* Header */}
             <div className="p-6 bg-[#004e3a] text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-[#009865] rounded-full flex items-center justify-center">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-black text-sm">Copiloto IA</span>
+                <div>
+                  <span className="font-black text-sm block leading-none">Copiloto EcoEnergiza</span>
+                  <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{isConsultant ? 'Modo Consultor' : 'Suporte Inteligente'}</span>
+                </div>
               </div>
               <button onClick={() => setIsOpen(false)}><X className="w-5 h-5" /></button>
             </div>
 
             {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] p-4 rounded-2xl text-xs font-bold ${
@@ -121,13 +138,8 @@ export default function AICopilot({ theme = 'light' }: { theme?: 'light' | 'dark
                   placeholder="Digite sua dúvida..." 
                   className={`w-full border-none rounded-xl px-4 py-3 text-xs font-bold outline-none resize-none ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}
                 />
-                {input && (
-                  <button onClick={() => setInput("")} className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
               </div>
-              <button onClick={handleSend} className="p-3 bg-[#009865] text-white rounded-xl shadow-lg">
+              <button onClick={handleSend} className="p-3 bg-[#009865] text-white rounded-xl shadow-lg active:scale-90 transition-transform">
                 <Send className="w-4 h-4" />
               </button>
             </div>
