@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Zap, Home, Award, Factory, Plus, ChevronRight, Lock } from 'lucide-react';
+import { Sun, Zap, Home, Award, Factory, Plus, ChevronRight, Lock, UserCheck } from 'lucide-react';
 
 interface DynamicAnimationProps {
   type: 'generation' | 'consumption' | 'consultant' | 'private_plant';
@@ -86,7 +86,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
         return (
           <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
             <div className="w-32 h-32 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4 relative">
-              <Award className="w-16 h-16 text-[#009865]" />
+              <UserCheck className="w-16 h-16 text-[#009865]" />
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -94,27 +94,28 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
               />
             </div>
             <div className="text-center">
-              <p className="text-xl font-black text-[#004e3a] dark:text-white">Renda Extra</p>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Seja Consultor</p>
+              <p className="text-3xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">Renda Extra</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Seja um Consultor</p>
             </div>
           </div>
         );
       case 'private_plant':
         return (
           <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
-            <div className="w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-[2rem] flex items-center justify-center mb-4 relative">
+            <div className="w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-[2.5rem] flex items-center justify-center mb-4 relative overflow-hidden">
               <Factory className="w-16 h-16 text-blue-600" />
               <motion.div 
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center"
-              >
+                animate={{ y: [-100, 100] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent"
+              />
+              <div className="absolute top-2 right-2 w-8 h-8 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center">
                 <Plus className="w-5 h-5 text-blue-600" />
-              </motion.div>
+              </div>
             </div>
             <div className="text-center">
               <p className="text-xl font-black text-[#004e3a] dark:text-white">Gestão Particular</p>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Cadastre sua Usina</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Cadastre sua Usina</p>
             </div>
           </div>
         );

@@ -129,7 +129,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
                 </div>
                 <button 
                   onClick={handleEndSession}
-                  className="text-[10px] font-black text-red-500 uppercase tracking-widest self-center hover:underline"
+                  className="text-[10px] font-black text-red-500 uppercase tracking-widest self-center hover:underline cursor-pointer"
                 >
                   Encerrar Atendimento
                 </button>
