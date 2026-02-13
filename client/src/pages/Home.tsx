@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import LoginForm from "@/components/landing/LoginForm";
@@ -12,51 +12,71 @@ export default function Home() {
   const [initialStep, setInitialStep] = useState<"email" | "code" | "other">("email");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [consultantModalOpen, setConsultantModalOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark";
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   const abrirLogin = (step: "email" | "code" | "other" = "email") => {
     setInitialStep(step);
     setLoginAberto(true);
   };
 
-  // Se estiver logado, mostra o Dashboard
   if (isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <MainDashboard />
-        <AICopilot />
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+        <MainDashboard onLogout={() => setIsLoggedIn(false)} theme={theme} toggleTheme={toggleTheme} />
+        <AICopilot theme={theme} />
         <ConsultantModal 
           isOpen={consultantModalOpen} 
           onClose={() => setConsultantModalOpen(false)} 
         />
-        {/* Botão temporário para testar o modal de consultor no dashboard */}
-        <button 
-          onClick={() => setConsultantModalOpen(true)}
-          className="fixed bottom-24 right-6 px-4 py-2 bg-[#004e3a] text-white rounded-xl text-[10px] font-bold shadow-lg z-[150]"
-        >
-          TESTAR MODAL CONSULTOR
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white overflow-hidden fixed inset-0">
-      <Navbar onOpenLogin={() => abrirLogin("email")} />
+    <div className={`h-screen w-screen flex flex-col overflow-hidden fixed inset-0 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+      <Navbar onOpenLogin={() => abrirLogin("email")} theme={theme} toggleTheme={toggleTheme} />
       
       <div className="flex-1 flex flex-col lg:flex-row pt-20 lg:pt-0 overflow-hidden">
-        <div className="h-full lg:flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden">
           <Hero onStart={() => abrirLogin("email")} />
+        </div>
+        
+        {/* Layout Dividido: Login sempre visível no desktop ao lado do Hero */}
+        <div className="hidden lg:flex w-[450px] border-l border-gray-100 dark:border-gray-800 items-center justify-center p-8 bg-gray-50/50 dark:bg-gray-800/30">
+          <LoginForm 
+            initialStep={initialStep}
+            onLoginSuccess={() => setIsLoggedIn(true)}
+            onOpenOther={() => setInitialStep("other")}
+            embedded={true}
+          />
         </div>
       </div>
 
       <AnimatePresence>
         {loginAberto && (
-          <LoginForm 
-            initialStep={initialStep} 
-            onClose={() => setLoginAberto(false)} 
-            onLoginSuccess={() => setIsLoggedIn(true)}
-            onOpenOther={() => setInitialStep("other")}
-          />
+          <div className="lg:hidden">
+            <LoginForm 
+              initialStep={initialStep} 
+              onClose={() => setLoginAberto(false)} 
+              onLoginSuccess={() => setIsLoggedIn(true)}
+              onOpenOther={() => setInitialStep("other")}
+            />
+          </div>
         )}
       </AnimatePresence>
     </div>
