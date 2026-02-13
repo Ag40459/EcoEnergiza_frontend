@@ -8,7 +8,7 @@ import ConsultantModal from "@/components/modals/ConsultantModal";
 import { AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  const [loginAberto, setLoginAberto] = useState(false);
+  const [loginAberto, setLoginAberto] = useState(false);;
   const [initialStep, setInitialStep] = useState<"email" | "code" | "other">("email");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [consultantModalOpen, setConsultantModalOpen] = useState(false);
