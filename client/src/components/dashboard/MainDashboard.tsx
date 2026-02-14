@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Calendar, DollarSign, BookOpen, BarChart,
   Home as HomeIcon, PieChart, Award, Wallet, Search, Bell, Menu, Plus,
   Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2,
-  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp
+  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp, History
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
 import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
@@ -21,6 +21,47 @@ interface MainDashboardProps {
 
 type TabId = 'inicio' | 'dados' | 'seguranca' | 'perfil' | 'indicacoes' | 'moedas' | 'consultor' | 'adm' | 'agenda' | 'crm';
 
+// Componente de Modal de Saldos (Restaurado)
+const BalanceModal = ({ isOpen, onClose, type }: { isOpen: boolean, onClose: () => void, type: 'kwh' | 'eco' }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        className="bg-white dark:bg-gray-900 rounded-[3rem] w-full max-w-md p-8 relative shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-5 h-5 text-gray-400" /></button>
+        <div className="text-center space-y-6">
+          <div className={`w-16 h-16 mx-auto rounded-2xl flex items-center justify-center ${type === 'kwh' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+            {type === 'kwh' ? <Zap className="w-8 h-8" /> : <Wallet className="w-8 h-8" />}
+          </div>
+          <div>
+            <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Histórico de {type === 'kwh' ? 'Consumo' : 'Moedas'}</h2>
+            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Últimos 30 dias</p>
+          </div>
+          <div className="space-y-3 text-left">
+            {[
+              { date: '14 Fev', val: type === 'kwh' ? '- 12.4 kWh' : '+ 50 ECO', label: 'Uso Diário' },
+              { date: '13 Fev', val: type === 'kwh' ? '- 15.1 kWh' : '+ 45 ECO', label: 'Uso Diário' },
+              { date: '12 Fev', val: type === 'kwh' ? '- 10.8 kWh' : '+ 120 ECO', label: 'Bônus Indicação' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase">{item.date}</p>
+                  <p className="font-bold text-sm dark:text-white">{item.label}</p>
+                </div>
+                <p className={`font-black ${item.val.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{item.val}</p>
+              </div>
+            ))}
+          </div>
+          <button onClick={onClose} className="w-full py-4 bg-[#004e3a] text-white rounded-2xl font-black">Fechar</button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenConsultant, isAdmin = false }: MainDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabId>('inicio');
   const [usinaAtiva, setUsinaAtiva] = useState(false);
@@ -28,9 +69,11 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
+  const [showBalanceModal, setShowBalanceModal] = useState<{ open: boolean, type: 'kwh' | 'eco' }>({ open: false, type: 'kwh' });
   const [footerTabs, setFooterTabs] = useState<TabId[]>(['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])]);
   const [isFooterDrawerOpen, setIsFooterDrawerOpen] = useState(false);
   const [editingTabIndex, setEditingTabIndex] = useState<number | null>(null);
+  const [agendaView, setAgendaView] = useState<'list' | 'grid'>('list');
 
   const userName = "Alex Silva";
 
@@ -57,7 +100,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 type="generation" 
                 state={usinaAtiva ? 'active' : 'inactive'} 
                 label="Geração de Energia" 
-                value="124.5" unit="kWh" 
+                value={usinaAtiva ? "124.5" : "0.0"} unit="kWh" 
                 isAtivo={usinaAtiva}
                 onClick={() => setShowGenModal(true)} 
               />
@@ -65,7 +108,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 type="consumption" 
                 state={casaAtiva ? 'active' : 'inactive'} 
                 label="Consumo da Casa" 
-                value="842.1" unit="kWh" 
+                value={casaAtiva ? "842.1" : "0.0"} unit="kWh" 
                 isAtivo={casaAtiva}
                 onClick={() => setShowConsModal(true)} 
               />
@@ -80,7 +123,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               <DynamicAnimation 
                 type="consultant" 
                 state="active" 
-                label="Renda Extra" 
+                label="Consultor" 
                 value="15%" unit="Comissão" 
                 isAtivo={true}
                 onClick={() => setActiveTab('consultor')} 
@@ -182,32 +225,64 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
           </motion.div>
         );
       case 'agenda':
+        const agendaItems = [
+          { hora: "09:00", tarefa: "Visita Técnica - João Pereira", tipo: "Visita", desc: "Verificar telhado e incidência solar." },
+          { hora: "14:30", tarefa: "Call de Fechamento - Condomínio Sol", tipo: "Call", desc: "Apresentar proposta final para o síndico." },
+          { hora: "16:00", tarefa: "Reunião de Equipe", tipo: "Interno", desc: "Alinhamento de metas mensais." },
+        ];
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8 max-w-4xl mx-auto">
             <div className="bg-white dark:bg-gray-800 rounded-[3rem] p-10 shadow-xl border border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Minha Agenda</h2>
-                <button className="p-4 bg-[#009865] text-white rounded-2xl shadow-lg"><Plus className="w-5 h-5" /></button>
+                <div className="flex items-center gap-3">
+                  <div className="bg-gray-100 dark:bg-gray-900 p-1 rounded-xl flex">
+                    <button 
+                      onClick={() => setAgendaView('list')}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${agendaView === 'list' ? 'bg-white dark:bg-gray-800 shadow-sm text-[#009865]' : 'text-gray-400'}`}
+                    >
+                      Lista
+                    </button>
+                    <button 
+                      onClick={() => setAgendaView('grid')}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${agendaView === 'grid' ? 'bg-white dark:bg-gray-800 shadow-sm text-[#009865]' : 'text-gray-400'}`}
+                    >
+                      Grade
+                    </button>
+                  </div>
+                  <button className="p-4 bg-[#009865] text-white rounded-2xl shadow-lg"><Plus className="w-5 h-5" /></button>
+                </div>
               </div>
               
-              <div className="space-y-4">
-                {[
-                  { hora: "09:00", tarefa: "Visita Técnica - João Pereira", tipo: "Visita" },
-                  { hora: "14:30", tarefa: "Call de Fechamento - Condomínio Sol", tipo: "Call" },
-                  { hora: "16:00", tarefa: "Reunião de Equipe", tipo: "Interno" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-6 p-6 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-transparent hover:border-[#009865] transition-all">
-                    <div className="text-center min-w-[60px]">
-                      <p className="text-lg font-black text-[#009865]">{item.hora}</p>
+              {agendaView === 'list' ? (
+                <div className="space-y-4">
+                  {agendaItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-6 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border border-transparent hover:border-[#009865] transition-all group">
+                      <div className="text-center min-w-[60px]">
+                        <p className="text-lg font-black text-[#009865]">{item.hora}</p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-[#004e3a] dark:text-white">{item.tarefa}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">{item.tipo}</p>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-300" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-black text-[#004e3a] dark:text-white">{item.tarefa}</p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase">{item.tipo}</p>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {agendaItems.map((item, i) => (
+                    <div key={i} className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-[2.5rem] border-2 border-transparent hover:border-[#009865] transition-all group relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-4">
+                        <span className="px-3 py-1 bg-[#009865]/10 text-[#009865] rounded-full text-[8px] font-black uppercase">{item.tipo}</span>
+                      </div>
+                      <p className="text-2xl font-black text-[#009865] mb-2">{item.hora}</p>
+                      <p className="font-black text-[#004e3a] dark:text-white mb-2">{item.tarefa}</p>
+                      <p className="text-xs text-gray-400 font-medium leading-relaxed">{item.desc}</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         );
@@ -349,14 +424,20 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <img src="/assets/logo.png" alt="Logo" className="h-12 w-auto" />
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-2xl border border-green-100">
+            <button 
+              onClick={() => setShowBalanceModal({ open: true, type: 'kwh' })}
+              className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-2xl border border-green-100 hover:scale-105 transition-transform"
+            >
               <Zap className="w-4 h-4 text-[#009865]" />
-              <span className="text-xs font-black text-[#004e3a] dark:text-green-400">124.5 kWh</span>
-            </div>
-            <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-2 rounded-2xl border border-yellow-100">
+              <span className="text-xs font-black text-[#004e3a] dark:text-green-400">{usinaAtiva ? "124.5" : "0.0"} kWh</span>
+            </button>
+            <button 
+              onClick={() => setShowBalanceModal({ open: true, type: 'eco' })}
+              className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-2 rounded-2xl border border-yellow-100 hover:scale-105 transition-transform"
+            >
               <Wallet className="w-4 h-4 text-yellow-600" />
               <span className="text-xs font-black text-yellow-700 dark:text-yellow-500">850 ECO</span>
-            </div>
+            </button>
             <button onClick={toggleTheme} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-yellow-400" />}
             </button>
@@ -424,9 +505,26 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         </div>
       </footer>
 
-      <GenerationModal isOpen={showGenModal} onClose={() => setShowGenModal(false)} />
-      <ConsumptionModal isOpen={showConsModal} onClose={() => setShowConsModal(false)} />
-      <PrivatePlantModal isOpen={showPrivatePlantModal} onClose={() => setShowPrivatePlantModal(false)} />
+      <GenerationModal 
+        isOpen={showGenModal} 
+        onClose={() => setShowGenModal(false)} 
+        onActivate={() => setUsinaAtiva(true)}
+        onRedirectToTab={(tab) => setActiveTab(tab)}
+      />
+      <ConsumptionModal 
+        isOpen={showConsModal} 
+        onClose={() => setShowConsModal(false)} 
+        onActivate={() => setCasaAtiva(true)}
+      />
+      <PrivatePlantModal 
+        isOpen={showPrivatePlantModal} 
+        onClose={() => setShowPrivatePlantModal(false)} 
+      />
+      <BalanceModal 
+        isOpen={showBalanceModal.open} 
+        onClose={() => setShowBalanceModal({ ...showBalanceModal, open: false })} 
+        type={showBalanceModal.type} 
+      />
     </div>
   );
 }

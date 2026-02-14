@@ -44,20 +44,20 @@ export default function Hero({ onStart }: HeroProps) {
   return (
     <section
       id="inicio"
-      className="w-full h-full flex items-center justify-center p-6 lg:p-20 overflow-hidden relative"
+      className="w-full min-h-screen flex items-center justify-center p-6 lg:p-20 overflow-hidden relative"
       style={{
         background: coresGradiente[corIndex],
         transition: "background 3s ease-in-out",
       }}
     >
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center gap-12 lg:gap-20 relative z-10">
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center gap-12 lg:gap-20 relative z-10 py-12">
         <div className="flex-1 text-center lg:text-left">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="h-[180px] md:h-[220px] lg:h-[280px] mb-8 flex items-start justify-center lg:justify-start">
+            <div className="min-h-[180px] md:min-h-[220px] lg:min-h-[280px] mb-8 flex items-start justify-center lg:justify-start">
               <h1
                 className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
                 style={{ color: "#004e3a" }}

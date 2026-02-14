@@ -13,9 +13,10 @@ interface ModalProps {
   onClose: () => void;
   onActivate?: () => void;
   isAtivo?: boolean;
+  onRedirectToTab?: (tab: any) => void;
 }
 
-export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActivate }) => {
+export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActivate, onRedirectToTab }) => {
   const [step, setStep] = useState(1);
   const [bill, setBill] = useState('');
   const [calcResult, setCalcResult] = useState<any>(null);
@@ -43,9 +44,17 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
-        <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      onClick={handleClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} 
+        animate={{ scale: 1, opacity: 1 }} 
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={handleClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
         
         {step === 1 && (
           <div className="space-y-8">
@@ -147,8 +156,18 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
                 <button 
                   key={method.id}
                   onClick={() => {
-                    if (method.id === 'financiamento') alert("Redirecionando para o Santander...");
-                    else { alert("Pedido realizado com sucesso!"); handleClose(); onActivate?.(); }
+                    if (method.id === 'financiamento') {
+                      alert("Redirecionando para o Santander (Verificação de Segurança)...");
+                      handleClose();
+                      onRedirectToTab?.('seguranca');
+                    } else if (method.id === 'comodato') {
+                      alert("Você entrou na lista de espera para o Comodato! Entraremos em contato em breve.");
+                      handleClose();
+                    } else { 
+                      alert("Pedido realizado com sucesso!"); 
+                      handleClose(); 
+                      onActivate?.(); 
+                    }
                   }}
                   className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl hover:border-[#009865] border-2 border-transparent transition-all"
                 >
@@ -183,8 +202,16 @@ export const ConsumptionModal: React.FC<ModalProps> = ({ isOpen, onClose, onActi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} 
+        animate={{ scale: 1, opacity: 1 }} 
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
 
         {!isAtivo && !purchaseComplete ? (
@@ -210,8 +237,8 @@ export const ConsumptionModal: React.FC<ModalProps> = ({ isOpen, onClose, onActi
               </div>
             </div>
           </div>
-        ) : purchaseComplete ? (
-          <div className="text-center space-y-8 py-10">
+        ) : !isAtivo && purchaseComplete ? (
+          <div className="text-center space-y-8">
             <Truck className="w-20 h-20 text-[#009865] mx-auto animate-bounce" />
             <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Pedido Realizado!</h2>
             <div className="w-full bg-gray-100 dark:bg-gray-800 h-4 rounded-full overflow-hidden">
@@ -239,8 +266,16 @@ export const PrivatePlantModal: React.FC<ModalProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl">
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }} 
+        animate={{ scale: 1, opacity: 1 }} 
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
         
         {step === 1 ? (

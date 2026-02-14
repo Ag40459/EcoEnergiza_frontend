@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, User, Bot, Trash2, Star, Mail, ArrowRight, ChevronLeft, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence, useDragControls } from 'framer-motion';
+import { MessageCircle, X, Send, User, Bot, Trash2, Star, Mail, ArrowRight, ChevronLeft, Sparkles, GripHorizontal } from 'lucide-react';
 
 interface AICopilotProps {
   theme?: 'light' | 'dark';
@@ -17,6 +17,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const dragControls = useDragControls();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -36,7 +37,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
       const lower = userMsg.toLowerCase();
       
       if (lower.includes('consultor')) {
-        aiResponse = "Para se tornar um consultor EcoEnergiza e ganhar comissões, clique na animação 'Renda Extra' no seu dashboard. Lá você encontrará o passo a passo completo!";
+        aiResponse = "Para se tornar um consultor EcoEnergiza e ganhar comissões, clique na animação 'Consultor' no seu dashboard. Lá você encontrará o passo a passo completo!";
       } else if (lower.includes('consumo')) {
         aiResponse = "Você pode acompanhar o consumo da sua casa clicando no card 'Consumo da Casa'. Se o saldo estiver embaçado, você precisará adquirir um Smart Meter para iniciar o monitoramento real.";
       } else if (lower.includes('usina') || lower.includes('geração')) {
@@ -69,20 +70,30 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
       <AnimatePresence>
         {isOpen && (
           <motion.div 
+            drag
+            dragControls={dragControls}
+            dragMomentum={false}
+            dragListener={false}
             initial={{ opacity: 0, y: 100, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             className={`absolute bottom-20 right-0 w-[90vw] max-w-[400px] h-[600px] rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}
           >
-            {/* Header com Imagem da Assistente */}
-            <div className="p-6 bg-[#004e3a] text-white flex items-center justify-between">
+            {/* Header com Drag Handle */}
+            <div 
+              onPointerDown={(e) => dragControls.start(e)}
+              className="p-6 bg-[#004e3a] text-white flex items-center justify-between cursor-grab active:cursor-grabbing"
+            >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-green-400 overflow-hidden">
                   <img src="https://i.pravatar.cc/150?u=sol" alt="Sol" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h3 className="font-black text-sm uppercase tracking-widest leading-none">Sol</h3>
-                  <p className="text-[8px] text-green-400 font-bold uppercase tracking-tighter">Assistente Virtual</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-sm uppercase tracking-widest leading-none">Sol</h3>
+                    <GripHorizontal className="w-4 h-4 opacity-50" />
+                  </div>
+                  <p className="text-[8px] text-green-400 font-bold uppercase tracking-tighter">Assistente Virtual (Arraste-me)</p>
                 </div>
               </div>
               <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
