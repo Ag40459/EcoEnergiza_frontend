@@ -254,19 +254,79 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 <div className="flex flex-col">
                   <h2 className="text-2xl font-black text-[#004e3a] dark:text-white leading-tight">{userName}</h2>
                   <p className="text-sm font-bold text-gray-400">alex.silva@email.com</p>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => setActiveTab('adm')}
+                      className="mt-2 self-start px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-black uppercase tracking-wider"
+                    >
+                      Acessar Painel ADM
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <button onClick={() => setActiveTab('seguranca')} className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl">
-                  <div className="flex items-center gap-4">
-                    <Shield className="w-5 h-5 text-[#009865]" />
-                    <span className="font-black text-sm text-[#004e3a] dark:text-white">Segurança</span>
+                {[
+                  { label: 'Meus Dados', icon: User, tab: 'dados' },
+                  { label: 'Segurança', icon: Shield, tab: 'seguranca' },
+                  { label: 'Personalizar Rodapé', icon: Settings, action: 'customize' },
+                ].map((item, idx) => (
+                  <button 
+                    key={idx} 
+                    onClick={() => {
+                      if (item.tab) setActiveTab(item.tab as TabId);
+                      if (item.action === 'customize') {
+                        const availableTabs: TabId[] = ['inicio', 'moedas', 'consultor', 'perfil', 'adm', 'seguranca', 'indicacoes'];
+                        const currentIdx = availableTabs.indexOf(footerTabs[1]);
+                        const nextTabs: TabId[] = ['inicio', availableTabs[(currentIdx + 1) % availableTabs.length], 'seguranca', 'perfil'];
+                        setFooterTabs(nextTabs);
+                        alert("Rodapé alterado para: " + nextTabs.join(', '));
+                      }
+                    }}
+                    className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <item.icon className="w-5 h-5 text-[#009865]" />
+                      <span className="font-black text-sm text-[#004e3a] dark:text-white">{item.label}</span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                  </button>
+                ))}
+              </div>
+              <button 
+                onClick={onLogout}
+                className="w-full mt-8 py-4 flex items-center justify-center gap-3 text-red-500 font-black text-sm border-2 border-red-50 dark:border-red-900/20 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+              >
+                <LogOut className="w-5 h-5" /> Sair da Conta
+              </button>
+            </div>
+          </motion.div>
+        );
+      case 'seguranca':
+        return (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-2xl mx-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-[3rem] p-8 shadow-xl border border-gray-100 dark:border-gray-700">
+              <div className="text-center mb-8">
+                <Shield className="w-16 h-16 text-[#009865] mx-auto mb-4" />
+                <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Segurança e Verificação</h2>
+                <p className="text-sm text-gray-400 font-bold">Mantenha sua conta protegida e verificada</p>
+              </div>
+              <div className="space-y-4">
+                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
+                  <FileCheck className="w-10 h-10 text-gray-400" />
+                  <div className="text-center">
+                    <p className="font-black text-[#004e3a] dark:text-white">Envio de Documentos</p>
+                    <p className="text-xs text-gray-400">RG, CNH ou Passaporte (Frente e Verso)</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-300" />
-                </button>
-                <button onClick={onLogout} className="w-full mt-4 py-4 flex items-center justify-center gap-3 text-red-500 font-black text-sm border-2 border-red-50 rounded-2xl">
-                  <LogOut className="w-5 h-5" /> Sair da Conta
-                </button>
+                  <button className="px-6 py-2 bg-[#009865] text-white rounded-full font-black text-xs uppercase">Fazer Upload</button>
+                </div>
+                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
+                  <Camera className="w-10 h-10 text-gray-400" />
+                  <div className="text-center">
+                    <p className="font-black text-[#004e3a] dark:text-white">Reconhecimento Facial</p>
+                    <p className="text-xs text-gray-400">Selfie para validação de identidade</p>
+                  </div>
+                  <button className="px-6 py-2 bg-[#004e3a] text-white rounded-full font-black text-xs uppercase">Iniciar Biometria</button>
+                </div>
               </div>
             </div>
           </motion.div>
