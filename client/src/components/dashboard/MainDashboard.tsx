@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Calendar, DollarSign, BookOpen, BarChart,
   Home as HomeIcon, PieChart, Award, Wallet, Search, Bell, Menu, Plus,
   Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2,
-  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock
+  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
 import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
@@ -28,7 +28,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
-  const [footerTabs, setFooterTabs] = useState<TabId[]>(['inicio', 'indicacoes', 'seguranca', 'perfil']);
+  const [footerTabs, setFooterTabs] = useState<TabId[]>(['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])]);
   const [isFooterDrawerOpen, setIsFooterDrawerOpen] = useState(false);
   const [editingTabIndex, setEditingTabIndex] = useState<number | null>(null);
 
@@ -42,7 +42,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'moedas', label: 'Moedas', icon: Wallet },
     { id: 'consultor', label: 'Consultor', icon: Award },
-    { id: 'adm', label: 'ADM', icon: Settings2 },
+    ...(isAdmin ? [{ id: 'adm' as const, label: 'ADM', icon: Settings2 }] : []),
     { id: 'agenda', label: 'Agenda', icon: Calendar },
     { id: 'crm', label: 'CRM', icon: Briefcase },
   ];
@@ -212,6 +212,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
           </motion.div>
         );
       case 'adm':
+        if (!isAdmin) return <div className="text-center py-12 text-gray-400">Acesso negado</div>;
         return (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 max-w-4xl mx-auto">
             <div className="bg-white dark:bg-gray-800 rounded-[3.5rem] p-10 shadow-2xl border border-gray-100 dark:border-gray-700">

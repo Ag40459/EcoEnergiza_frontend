@@ -21,6 +21,14 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
   const [calcResult, setCalcResult] = useState<any>(null);
   const [currentEquip, setCurrentEquip] = useState(0);
 
+  const handleClose = () => {
+    setStep(1);
+    setBill('');
+    setCalcResult(null);
+    setCurrentEquip(0);
+    onClose();
+  };
+
   const equipamentos = [
     { nome: "Painel Solar WEG 550W", desc: "Alta eficiência monocristalina com tecnologia Half-Cell.", img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800" },
     { nome: "Inversor GROWATT Smart", desc: "Monitoramento em tempo real via Wi-Fi e IA integrada.", img: "https://images.unsplash.com/photo-1592833159155-c62df1b65634?q=80&w=800" }
@@ -140,7 +148,7 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
                   key={method.id}
                   onClick={() => {
                     if (method.id === 'financiamento') alert("Redirecionando para o Santander...");
-                    else { alert("Pedido realizado com sucesso!"); onClose(); onActivate?.(); }
+                    else { alert("Pedido realizado com sucesso!"); handleClose(); onActivate?.(); }
                   }}
                   className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl hover:border-[#009865] border-2 border-transparent transition-all"
                 >

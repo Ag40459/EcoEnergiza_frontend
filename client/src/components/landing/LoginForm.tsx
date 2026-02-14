@@ -13,7 +13,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   const [step, setStep] = useState(initialStep);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [showCodeModal, setShowCodeModal] = useState(false);
 
@@ -37,7 +37,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
     newCode[index] = value;
     setCode(newCode);
 
-    if (value && index < 5) {
+    if (value && index < 3) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       nextInput?.focus();
     }
@@ -190,7 +190,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
                         key={idx} id={`code-${idx}`}
                         type="text" maxLength={1} value={digit}
                         onChange={(e) => handleCodeChange(idx, e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && idx === 5 && handleLoginFinal()}
+                        onKeyPress={(e) => e.key === 'Enter' && idx === 3 && handleLoginFinal()}
                         className="w-12 h-16 text-center text-2xl font-black bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none dark:text-white"
                       />
                     ))}
