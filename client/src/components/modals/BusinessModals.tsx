@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Zap, ArrowRight, CheckCircle, Shield, TrendingUp, 
   DollarSign, Cpu, Wifi, MapPin, ChevronLeft, ChevronRight, Share2, Info,
-  Smartphone, CreditCard, Landmark, QrCode, ShoppingCart, Truck, Factory, Activity, Tool
+  Smartphone, CreditCard, Landmark, QrCode, ShoppingCart, Truck, Factory, Activity, Wrench
 } from 'lucide-react';
-import { solarCalculator } from '../../../upload/calc3.js'; // Ajustado para o caminho real ou embutido
+// @ts-ignore: No declaration file for calc3.js; provide a .d.ts if you want proper types.
+import { solarCalculator } from '../../upload/calc3.js';
 
 interface ModalProps {
   isOpen: boolean;
@@ -248,7 +249,7 @@ export const PrivatePlantModal: React.FC<ModalProps> = ({ isOpen, onClose }) => 
                 <p className="text-[10px] text-gray-500 font-bold">Cruzamos dados locais para prever sua geração.</p>
               </div>
               <div className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-3xl border border-blue-100">
-                <Tool className="w-6 h-6 text-blue-600 mb-2" />
+                <Wrench className="w-6 h-6 text-blue-600 mb-2" />
                 <p className="text-xs font-black text-[#004e3a] dark:text-white uppercase">Preventiva</p>
                 <p className="text-[10px] text-gray-500 font-bold">Alertas automáticos para limpeza e manutenção.</p>
               </div>
