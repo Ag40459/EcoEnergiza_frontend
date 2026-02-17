@@ -70,16 +70,16 @@ export default function Home() {
   }
 
   return (
-    <div className={`h-screen w-screen flex flex-col overflow-hidden fixed inset-0 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+    <div className={`min-h-screen w-full flex flex-col relative ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <Navbar 
         onOpenLogin={() => abrirLogin("email")} 
         theme={theme} 
         toggleTheme={toggleTheme} 
       />
       
-      <div className="flex-1 overflow-hidden">
+      <main className="flex-1 pt-20">
         <Hero onStart={() => abrirLogin("email")} />
-      </div>
+      </main>
 
       <AnimatePresence>
         {loginAberto && (

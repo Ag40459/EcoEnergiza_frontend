@@ -23,7 +23,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isOpen]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -66,7 +66,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-[200]">
+    <div className="fixed bottom-24 right-6 z-[9999]">
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -79,7 +79,71 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             className={`absolute bottom-20 right-0 w-[90vw] max-w-[400px] h-[600px] rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}
           >
-            {}
+            {/* Header */}
+            <div 
+              onPointerDown={(e) => dragControls.start(e)}
+              className={`p-6 flex items-center justify-between cursor-grab active:cursor-grabbing ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#009865] flex items-center justify-center text-white">
+                  <Bot className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className={`text-sm font-black ${theme === 'dark' ? 'text-white' : 'text-[#004e3a]'}`}>Sol Copilot</h3>
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Online Agora</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={handleEndSession} className="p-2 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors text-gray-400">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth">
+              {messages.map((msg, i) => (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  key={i} 
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[85%] p-4 rounded-3xl text-sm font-medium shadow-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-[#009865] text-white rounded-tr-none' 
+                      : theme === 'dark' ? 'bg-gray-800 text-gray-200 rounded-tl-none' : 'bg-gray-100 text-[#004e3a] rounded-tl-none'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Input */}
+            <div className={`p-6 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
+              <div className={`flex items-center gap-2 p-2 rounded-[1.5rem] ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                <input 
+                  type="text" 
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Pergunte qualquer coisa..."
+                  className="flex-1 bg-transparent border-none outline-none px-4 py-2 text-sm font-bold"
+                />
+                <button 
+                  onClick={handleSend}
+                  className="w-10 h-10 bg-[#009865] text-white rounded-xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Evaluation Overlay */}
             <AnimatePresence>
               {showEvaluation && (
                 <motion.div 
