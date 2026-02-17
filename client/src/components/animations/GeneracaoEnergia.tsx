@@ -74,7 +74,7 @@ export default function GeneracaoEnergia({
           className="w-32 h-32"
           viewBox="0 0 200 200"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          xmlns="http:
         >
           <motion.circle
             cx="100"

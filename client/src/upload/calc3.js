@@ -1,39 +1,9 @@
-/**
- * Utilitário para formatação de valores monetários no padrão brasileiro
- */
 
-/**
- * Formata um valor numérico para o formato de moeda brasileira (x.xxx.xxx,xx)
- * @param {string|number} value - Valor a ser formatado (pode ser string numérica ou número)
- * @returns {string} - Valor formatado como string no padrão brasileiro
- */
-export const formatCurrency = (value) => {
-  // Remove qualquer caractere não numérico
-  const numericValue = String(value).replace(/\D/g, '');
-  
-  // Se não houver valor, retorna vazio
-  if (!numericValue) return '';
-  
-  // Converte para número e divide por 100 para considerar os centavos
-  const floatValue = parseFloat(numericValue) / 100;
-  
-  // Formata o número usando o locale pt-BR
-  return floatValue.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-};
-
-/**
- * Converte um valor formatado como moeda para número
- * @param {string} formattedValue - Valor formatado como moeda
- * @returns {number} - Valor numérico
- */
 export const parseCurrencyToNumber = (formattedValue) => {
-  // Remove qualquer caractere não numérico
+  
   const numericValue = String(formattedValue).replace(/\D/g, '');
   
-  // Converte para número e divide por 100 para considerar os centavos
+  
   return numericValue ? parseFloat(numericValue) / 100 : 0;
 };
 
@@ -41,27 +11,27 @@ export const parseCurrencyToNumber = (formattedValue) => {
 export function formatCurrencyInput(value) {
   if (!value) return '';
   
-  // 1. Remove tudo que não for dígito
+  
   let digits = value.replace(/\D/g, '');
 
   if (!digits) return '';
 
-  // 2. Preserva o último dígito digitado, especialmente importante para zeros
-  // Se o último caractere do input original for 0, garantimos que ele seja mantido
+  
+  
   const lastChar = value.slice(-1);
   const preserveLastZero = lastChar === '0' && digits.length > 0;
   
-  // 3. Adiciona zeros à esquerda se necessário para ter pelo menos 3 dígitos (para centavos)
+  
   digits = digits.padStart(3, '0');
 
-  // 4. Separa parte inteira e decimal
+  
   const integerPart = digits.slice(0, -2);
   const decimalPart = digits.slice(-2);
 
-  // 5. Adiciona pontos como separador de milhar na parte inteira
+  
   const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-  // 6. Retorna o valor formatado com vírgula
+  
   return `${formattedInteger},${decimalPart}`;
 }
 

@@ -10,12 +10,21 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("isLoggedIn") === "true";
+  });
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem("isAdmin") === "true";
+  });
   const [loginAberto, setLoginAberto] = useState(false);
   const [initialStep, setInitialStep] = useState<"email" | "code" | "other">("email");
   const [consultantModalOpen, setConsultantModalOpen] = useState(false);
-  const [copilotOpen, setCopilotOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("isLoggedIn", isLoggedIn.toString());
+    localStorage.setItem("isAdmin", isAdmin.toString());
+  }, [isLoggedIn, isAdmin]);
 
   const abrirLogin = (step: "email" | "code" | "other" = "email") => {
     setInitialStep(step);
@@ -31,6 +40,9 @@ export default function Home() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setIsAdmin(false);
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("activeTab"); 
   };
 
   if (isLoggedIn) {
@@ -51,7 +63,7 @@ export default function Home() {
         
         <AICopilot 
           theme={theme}
-          isConsultant={false} // Pode ser dinâmico baseado no perfil do usuário
+          isConsultant={false} 
         />
       </div>
     );

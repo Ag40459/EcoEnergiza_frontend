@@ -69,7 +69,7 @@ export const ContentModal: React.FC<ModalProps> = ({ isOpen, onClose, title, ite
                 <div className="space-y-6">
                   <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 rounded-[3rem] overflow-hidden group shadow-lg">
                     <img 
-                      src={selectedItem.imagens?.[currentImg] || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800"} 
+                      src={selectedItem.imagens?.[currentImg] || "https:
                       className="w-full h-full object-cover cursor-zoom-in"
                       onClick={() => setZoomImg(selectedItem.imagens?.[currentImg])}
                     />
@@ -116,7 +116,7 @@ export const ContentModal: React.FC<ModalProps> = ({ isOpen, onClose, title, ite
         </div>
       </motion.div>
 
-      {/* Zoom Image Overlay */}
+      {}
       <AnimatePresence>
         {zoomImg && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setZoomImg(null)} className="fixed inset-0 z-[300] bg-black/95 flex items-center justify-center p-8 cursor-zoom-out">
@@ -145,7 +145,7 @@ export const ContactModal: React.FC<{ isOpen: boolean; onClose: () => void }> = 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
-  const zapLink = "https://wa.me/5581985967343?text=" + encodeURIComponent("Olá, eu vim do site EcoEnergiza, quero mais informações.");
+  const zapLink = "https:
 
   if (!isOpen) return null;
 

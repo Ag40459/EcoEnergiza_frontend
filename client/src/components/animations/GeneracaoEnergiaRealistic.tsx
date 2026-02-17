@@ -94,7 +94,7 @@ export default function GeneracaoEnergiaRealistic({
           className="w-full h-full"
           viewBox="0 0 400 350"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          xmlns="http:
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>

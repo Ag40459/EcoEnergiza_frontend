@@ -32,12 +32,14 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   };
 
   const handleCodeChange = (index: number, value: string) => {
-    if (value.length > 1) value = value[0];
+    const numericValue = value.replace(/[^0-9]/g, '');
+    if (numericValue.length > 1) return;
+    
     const newCode = [...code];
-    newCode[index] = value;
+    newCode[index] = numericValue;
     setCode(newCode);
 
-    if (value && index < 3) {
+    if (numericValue && index < 3) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       nextInput?.focus();
     }
@@ -47,7 +49,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      // Lógica de Admin: adm@adm.com / 0000 ou código
+      
       const isAdm = email.toLowerCase() === "adm@adm.com";
       onLoginSuccess(isAdm);
       setShowCodeModal(false);
@@ -162,7 +164,6 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
 
         {renderContent()}
 
-        {/* Modal de Código de 6 Dígitos */}
         <AnimatePresence>
           {showCodeModal && (
             <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
@@ -188,7 +189,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
                     {code.map((digit, idx) => (
                       <input 
                         key={idx} id={`code-${idx}`}
-                        type="text" maxLength={1} value={digit}
+                        type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1} value={digit}
                         onChange={(e) => handleCodeChange(idx, e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && idx === 3 && handleLoginFinal()}
                         className="w-12 h-16 text-center text-2xl font-black bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none dark:text-white"

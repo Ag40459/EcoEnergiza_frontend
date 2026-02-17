@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, Settings, Shield, FileText, LogOut, 
@@ -21,7 +21,6 @@ interface MainDashboardProps {
 
 type TabId = 'inicio' | 'dados' | 'seguranca' | 'perfil' | 'indicacoes' | 'moedas' | 'consultor' | 'adm' | 'agenda' | 'crm';
 
-// Componente de Modal de Saldos (Restaurado)
 const BalanceModal = ({ isOpen, onClose, type }: { isOpen: boolean, onClose: () => void, type: 'kwh' | 'eco' }) => {
   if (!isOpen) return null;
   return (
@@ -63,19 +62,36 @@ const BalanceModal = ({ isOpen, onClose, type }: { isOpen: boolean, onClose: () 
 };
 
 export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenConsultant, isAdmin = false }: MainDashboardProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('inicio');
-  const [usinaAtiva, setUsinaAtiva] = useState(false);
-  const [casaAtiva, setCasaAtiva] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    return (localStorage.getItem("activeTab") as TabId) || 'inicio';
+  });
+  const [usinaAtiva, setUsinaAtiva] = useState(() => {
+    return localStorage.getItem("usinaAtiva") === "true";
+  });
+  const [casaAtiva, setCasaAtiva] = useState(() => {
+    return localStorage.getItem("casaAtiva") === "true";
+  });
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
   const [showBalanceModal, setShowBalanceModal] = useState<{ open: boolean, type: 'kwh' | 'eco' }>({ open: false, type: 'kwh' });
-  const [footerTabs, setFooterTabs] = useState<TabId[]>(['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])]);
+  const [footerTabs, setFooterTabs] = useState<TabId[]>(() => {
+    const saved = localStorage.getItem("footerTabs");
+    if (saved) return JSON.parse(saved);
+    return ['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])];
+  });
   const [isFooterDrawerOpen, setIsFooterDrawerOpen] = useState(false);
   const [editingTabIndex, setEditingTabIndex] = useState<number | null>(null);
   const [agendaView, setAgendaView] = useState<'list' | 'grid'>('list');
 
   const userName = "Alex Silva";
+
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+    localStorage.setItem("usinaAtiva", usinaAtiva.toString());
+    localStorage.setItem("casaAtiva", casaAtiva.toString());
+    localStorage.setItem("footerTabs", JSON.stringify(footerTabs));
+  }, [activeTab, usinaAtiva, casaAtiva, footerTabs]);
 
   const allTabs: { id: TabId; label: string; icon: any }[] = [
     { id: 'inicio', label: 'Início', icon: HomeIcon },
@@ -89,6 +105,14 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     { id: 'agenda', label: 'Agenda', icon: Calendar },
     { id: 'crm', label: 'CRM', icon: Briefcase },
   ];
+
+  const visibleFooterTabs = useMemo(() => {
+    let count = footerTabs.length;
+    if (count % 2 !== 0) {
+      count = Math.max(2, count - 1);
+    }
+    return footerTabs.slice(0, count);
+  }, [footerTabs]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -476,32 +500,34 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
           )}
         </AnimatePresence>
 
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 px-8 py-4 flex items-center justify-between relative">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 px-8 py-4 flex items-center justify-around relative">
           <button 
             onClick={() => setIsFooterDrawerOpen(!isFooterDrawerOpen)}
-            className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-lg border-4 border-white dark:border-gray-950 hover:scale-110 transition-transform"
+            className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-lg border-4 border-white dark:border-gray-950 hover:scale-110 transition-transform z-10"
           >
             {isFooterDrawerOpen ? <X className="w-6 h-6" /> : <ChevronUp className="w-6 h-6" />}
           </button>
           
-          {footerTabs.map((tabId, idx) => {
-            const tab = allTabs.find(t => t.id === tabId);
-            if (!tab) return null;
-            return (
-              <button 
-                key={tabId}
-                onClick={() => {
-                  if (isFooterDrawerOpen) setEditingTabIndex(idx);
-                  else setActiveTab(tabId);
-                }}
-                className={`flex flex-col items-center gap-1 transition-all ${activeTab === tabId ? 'text-[#009865] scale-110' : 'text-gray-400'}`}
-              >
-                <tab.icon className="w-6 h-6" />
-                <span className="text-[10px] font-black uppercase tracking-tighter">{tab.label}</span>
-                {editingTabIndex === idx && <div className="w-1 h-1 bg-red-500 rounded-full mt-1 animate-pulse" />}
-              </button>
-            );
-          })}
+          <div className="flex w-full items-center justify-around">
+            {visibleFooterTabs.map((tabId, idx) => {
+              const tab = allTabs.find(t => t.id === tabId);
+              if (!tab) return null;
+              return (
+                <button 
+                  key={tabId}
+                  onClick={() => {
+                    if (isFooterDrawerOpen) setEditingTabIndex(idx);
+                    else setActiveTab(tabId);
+                  }}
+                  className={`flex flex-col items-center gap-1 transition-all ${activeTab === tabId ? 'text-[#009865] scale-110' : 'text-gray-400'}`}
+                >
+                  <tab.icon className="w-6 h-6" />
+                  <span className="text-[10px] font-black uppercase tracking-tighter">{tab.label}</span>
+                  {editingTabIndex === idx && <div className="w-1 h-1 bg-red-500 rounded-full mt-1 animate-pulse" />}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </footer>
 

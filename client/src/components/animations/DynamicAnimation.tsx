@@ -20,7 +20,6 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
       case 'generation':
         return (
           <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
-            {/* Sol Pulsante */}
             <motion.div 
               animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -29,7 +28,6 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
               <Sun className="w-16 h-16 text-yellow-500 fill-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.5)]" />
             </motion.div>
 
-            {/* Placa Solar */}
             <div className="relative mt-12">
               <div className="w-48 h-32 bg-blue-900 rounded-xl border-4 border-gray-300 relative overflow-hidden transform skew-x-12">
                 <div className="absolute inset-0 grid grid-cols-4 grid-rows-3 gap-1 p-1">
@@ -49,7 +47,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
               <div className="w-16 h-2 bg-gray-500 mx-auto rounded-full"></div>
             </div>
 
-            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md' : ''}`}>
+            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md select-none pointer-events-none' : ''}`}>
               <p className="text-3xl font-black text-[#004e3a] dark:text-white">{value} <span className="text-sm opacity-50">{unit}</span></p>
             </div>
           </div>
@@ -58,13 +56,11 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
         return (
           <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
             <div className="relative">
-              {/* Casa */}
               <div className="relative w-40 h-40">
                 <div className="absolute bottom-0 w-full h-24 bg-orange-100 dark:bg-orange-900/20 rounded-lg border-4 border-orange-200 dark:border-orange-800"></div>
                 <div className="absolute top-4 left-0 right-0 h-20 bg-red-600 rounded-lg transform -rotate-45 translate-y-2 origin-bottom-left border-b-4 border-red-800"></div>
                 <div className="absolute top-4 left-0 right-0 h-20 bg-red-600 rounded-lg transform rotate-45 translate-y-2 origin-bottom-right border-b-4 border-red-800"></div>
                 
-                {/* Janelas com Luz */}
                 <motion.div 
                   animate={{ backgroundColor: isAtivo ? ['#fef3c7', '#fcd34d', '#fef3c7'] : '#e5e7eb' }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -77,7 +73,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
                 />
               </div>
             </div>
-            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md' : ''}`}>
+            <div className={`mt-6 text-center ${!isAtivo ? 'blur-md select-none pointer-events-none' : ''}`}>
               <p className="text-3xl font-black text-[#004e3a] dark:text-white">{value} <span className="text-sm opacity-50">{unit}</span></p>
             </div>
           </div>
@@ -94,7 +90,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
               />
             </div>
             <div className="text-center">
-              <p className="text-3xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">Renda Extra</p>
+              <p className="text-3xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">Consultor</p>
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Seja um Consultor</p>
             </div>
           </div>

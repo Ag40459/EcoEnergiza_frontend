@@ -79,75 +79,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             className={`absolute bottom-20 right-0 w-[90vw] max-w-[400px] h-[600px] rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}
           >
-            {/* Header com Drag Handle */}
-            <div 
-              onPointerDown={(e) => dragControls.start(e)}
-              className="p-6 bg-[#004e3a] text-white flex items-center justify-between cursor-grab active:cursor-grabbing"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-white/20 border-2 border-green-400 overflow-hidden">
-                  <img src="https://i.pravatar.cc/150?u=sol" alt="Sol" className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-black text-sm uppercase tracking-widest leading-none">Sol</h3>
-                    <GripHorizontal className="w-4 h-4 opacity-50" />
-                  </div>
-                  <p className="text-[8px] text-green-400 font-bold uppercase tracking-tighter">Assistente Virtual (Arraste-me)</p>
-                </div>
-              </div>
-              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Chat Messages */}
-            <div ref={scrollRef} className={`flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-              {messages.map((msg, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-[80%] p-4 rounded-2xl text-xs font-bold ${
-                    msg.role === 'user' 
-                      ? 'bg-[#009865] text-white rounded-tr-none' 
-                      : (theme === 'dark' ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-gray-700 border-gray-100') + ' border shadow-sm rounded-tl-none'
-                  }`}>
-                    {msg.text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Input Area */}
-            <div className={`p-6 border-t ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2">
-                  <input 
-                    type="text" value={input} onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Como posso ajudar?"
-                    className={`flex-1 p-4 rounded-2xl border-none outline-none font-black text-xs ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}
-                  />
-                  <button 
-                    onClick={handleSend}
-                    className="p-4 bg-[#009865] text-white rounded-2xl hover:scale-105 transition-transform shadow-lg"
-                  >
-                    <Send className="w-5 h-5" />
-                  </button>
-                </div>
-                <button 
-                  onClick={handleEndSession}
-                  className="text-[10px] font-black text-red-500 uppercase tracking-widest self-center hover:underline cursor-pointer"
-                >
-                  Encerrar Atendimento
-                </button>
-              </div>
-            </div>
-
-            {/* Evaluation Overlay */}
+            {}
             <AnimatePresence>
               {showEvaluation && (
                 <motion.div 

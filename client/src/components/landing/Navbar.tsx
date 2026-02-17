@@ -29,7 +29,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
       icone: Zap,
       descricaoLonga: "Nossa solução de Usina Remota permite que você gere sua própria energia em nossas fazendas solares e receba os créditos diretamente na sua conta de luz, sem precisar instalar nada na sua residência.",
       beneficios: ["Sem instalação no telhado", "Ideal para apartamentos", "Economia imediata", "Gestão via App"],
-      imagens: ["https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800"]
+      imagens: ["https:
     },
     { 
       titulo: "Smart Metering", 
@@ -37,7 +37,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
       icone: Cpu,
       descricaoLonga: "Com o nosso Smart Meter, você acompanha seu consumo em tempo real, identifica aparelhos 'vilões' e recebe alertas inteligentes para economizar antes mesmo da conta chegar.",
       beneficios: ["Monitoramento Real-time", "Alertas de Consumo", "Identificação de Aparelhos", "Fácil Instalação"],
-      imagens: ["https://images.unsplash.com/photo-1558444479-c8f02e622c6a?q=80&w=800"]
+      imagens: ["https:
     },
     { 
       titulo: "Créditos de Carbono", 
@@ -45,7 +45,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
       icone: Globe,
       descricaoLonga: "Transformamos sua geração de energia limpa em ativos digitais e créditos de carbono que podem ser negociados ou usados para abater custos, incentivando a sustentabilidade lucrativa.",
       beneficios: ["Monetização Sustentável", "Ativos Digitais", "Impacto Ambiental Positivo", "Transparência Blockchain"],
-      imagens: ["https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800"]
+      imagens: ["https:
     }
   ];
 
@@ -56,7 +56,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
       icone: Heart,
       descricaoLonga: "Nascemos para democratizar o acesso à energia inteligente. Nossa missão é colocar o controle do ecossistema energético nas mãos do consumidor através de tecnologia de ponta e IA.",
       beneficios: ["Transparência", "Democratização", "Inovação Constante", "Foco no Cliente"],
-      imagens: ["https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=800"]
+      imagens: ["https:
     },
     { 
       titulo: "Tecnologia Ecolote", 
@@ -64,7 +64,7 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
       icone: Shield,
       descricaoLonga: "Utilizamos uma infraestrutura robusta de microserviços, Kafka e processamento em tempo real para garantir que cada watt gerado e cada centavo economizado seja auditável e preciso.",
       beneficios: ["Dados em Tempo Real", "Segurança Bancária", "Escalabilidade", "Precisão Absoluta"],
-      imagens: ["https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800"]
+      imagens: ["https:
     }
   ];
 

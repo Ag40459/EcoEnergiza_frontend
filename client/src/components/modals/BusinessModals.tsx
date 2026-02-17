@@ -5,7 +5,7 @@ import {
   DollarSign, Cpu, Wifi, MapPin, ChevronLeft, ChevronRight, Share2, Info,
   Smartphone, CreditCard, Landmark, QrCode, ShoppingCart, Truck, Factory, Activity, Wrench
 } from 'lucide-react';
-// @ts-ignore: No declaration file for calc3.js; provide a .d.ts if you want proper types.
+
 import { solarCalculator } from '../../upload/calc3.js';
 
 interface ModalProps {
@@ -31,8 +31,8 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
   };
 
   const equipamentos = [
-    { nome: "Painel Solar WEG 550W", desc: "Alta eficiência monocristalina com tecnologia Half-Cell.", img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800" },
-    { nome: "Inversor GROWATT Smart", desc: "Monitoramento em tempo real via Wi-Fi e IA integrada.", img: "https://images.unsplash.com/photo-1592833159155-c62df1b65634?q=80&w=800" }
+    { nome: "Painel Solar WEG 550W", desc: "Alta eficiência monocristalina com tecnologia Half-Cell.", img: "https:
+    { nome: "Inversor GROWATT Smart", desc: "Monitoramento em tempo real via Wi-Fi e IA integrada.", img: "https:
   ];
 
   const handleCalculate = () => {
@@ -88,7 +88,7 @@ export const GenerationModal: React.FC<ModalProps> = ({ isOpen, onClose, onActiv
               <h2 className="text-2xl font-black text-[#004e3a] dark:text-green-400">Seu Orçamento Inteligente</h2>
             </div>
 
-            {/* Carrossel de Equipamentos Restaurado */}
+            {}
             <div className="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-[2.5rem] overflow-hidden group">
               <img src={equipamentos[currentEquip].img} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
