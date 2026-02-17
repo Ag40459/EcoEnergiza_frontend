@@ -1,37 +1,17 @@
 
-export const parseCurrencyToNumber = (formattedValue) => {
-  
+export const parseCurrencyToNumber = (formattedValue: string | number) => {
   const numericValue = String(formattedValue).replace(/\D/g, '');
-  
-  
   return numericValue ? parseFloat(numericValue) / 100 : 0;
 };
 
-
-export function formatCurrencyInput(value) {
+export function formatCurrencyInput(value: string) {
   if (!value) return '';
-  
-  
   let digits = value.replace(/\D/g, '');
-
   if (!digits) return '';
-
-  
-  
-  const lastChar = value.slice(-1);
-  const preserveLastZero = lastChar === '0' && digits.length > 0;
-  
-  
   digits = digits.padStart(3, '0');
-
-  
   const integerPart = digits.slice(0, -2);
   const decimalPart = digits.slice(-2);
-
-  
   const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-  
   return `${formattedInteger},${decimalPart}`;
 }
 
@@ -46,10 +26,10 @@ export const DROPDOWN_OPTIONS = [
   { value: 3000, text: 'Acima de R$2000' }
 ];
 
-function calculateSavingsIn10Years(realGenerationKwh, energyRate, estimatedProjectCost) {
+function calculateSavingsIn10Years(realGenerationKwh: number, energyRate: number, estimatedProjectCost: number) {
   const annualTariffIncrease = 0.08;
   const systemDegradation = 0.007;
-  const yearlyData = [];
+  const yearlyData: any[] = [];
   
   let currentRate = energyRate;
   let currentGeneration = realGenerationKwh;
@@ -101,12 +81,18 @@ function calculateSavingsIn10Years(realGenerationKwh, energyRate, estimatedProje
   };
 }
 
+interface SolarCalculatorParams {
+  monthlyBill: number;
+  location?: string;
+  energyRate?: number;
+  solarIrradiance?: number;
+}
+
 export function solarCalculator({
   monthlyBill,
-  location = "Iguaracy - PE",
   energyRate = 1.03,
   solarIrradiance = 5.3
-}) {
+}: SolarCalculatorParams) {
   const daysPerMonth = 30;
   const performanceRatio = 0.75;
   const modulePower = 550;
@@ -147,7 +133,7 @@ export function solarCalculator({
   const interestRate = 0.0156;
   let totalInstallments = 60;
 
-  function calculateInstallment(value, months) {
+  function calculateInstallment(value: number, months: number) {
     return (value * interestRate * Math.pow(1 + interestRate, months)) /
            (Math.pow(1 + interestRate, months) - 1);
   }
@@ -189,7 +175,7 @@ export function solarCalculator({
     excessArea: Number(excessArea.toFixed(2)),
     valorMetroQuadrado,
     areaUsedInLots,
-    savingsIn10Years: financialMetrics.savingsIn10Years,
-    paybackTime: financialMetrics.paybackTime
+    annualSavings: financialMetrics.savingsIn10Years,
+    paybackYears: financialMetrics.paybackTime
   };
 }

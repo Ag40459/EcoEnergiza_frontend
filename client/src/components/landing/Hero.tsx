@@ -106,7 +106,32 @@ export default function Hero({ onStart }: HeroProps) {
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative z-10"
           >
-            {}
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1466611653911-95282fc365d5?auto=format&fit=crop&q=80&w=1000" 
+                alt="Energia Sustentável" 
+                className="w-full h-auto rounded-[3rem] shadow-2xl"
+              />
+              <div className="absolute -bottom-10 -right-10 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                    <Award className="w-6 h-6 text-[#009865]" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-gray-400 uppercase">Certificação</p>
+                    <p className="text-sm font-black text-[#004e3a] dark:text-white">Selo Verde 2026</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-[#009865]" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#009865] opacity-[0.05] rounded-full blur-[120px] -z-0"></div>
     </section>
   );

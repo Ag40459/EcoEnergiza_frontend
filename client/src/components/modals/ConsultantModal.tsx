@@ -96,8 +96,8 @@ export default function ConsultantModal({ isOpen, onClose }: ConsultantModalProp
                     {step.id === 2 && (
                       <div className="space-y-4">
                         <div className="aspect-video bg-gray-900 rounded-[2rem] flex items-center justify-center relative group overflow-hidden">
-                          <img src="https:
-                          <Play className="w-16 h-16 text-white group-hover:scale-110 transition-transform cursor-pointer" />
+                          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800" alt="Programa de Consultores" className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform cursor-pointer" />
+                          <Play className="w-16 h-16 text-white group-hover:scale-110 transition-transform cursor-pointer absolute" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl">
