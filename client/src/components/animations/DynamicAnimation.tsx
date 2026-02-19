@@ -19,7 +19,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
     switch (type) {
       case 'generation':
         return (
-          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6 pt-12">
             <motion.div 
               animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -54,7 +54,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
         );
       case 'consumption':
         return (
-          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6 pt-12">
             <div className="relative">
               <div className="relative w-40 h-40">
                 <div className="absolute bottom-0 w-full h-24 bg-orange-100 dark:bg-orange-900/20 rounded-lg border-4 border-orange-200 dark:border-orange-800"></div>
@@ -80,7 +80,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
         );
       case 'consultant':
         return (
-          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6 pt-12">
             <div className="w-32 h-32 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4 relative">
               <UserCheck className="w-16 h-16 text-[#009865]" />
               <motion.div 
@@ -97,7 +97,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
         );
       case 'private_plant':
         return (
-          <div className="relative w-full h-full flex flex-col items-center justify-center p-6">
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-6 pt-12">
             <div className="w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-[2.5rem] flex items-center justify-center mb-4 relative overflow-hidden">
               <Factory className="w-16 h-16 text-blue-600" />
               <motion.div 
@@ -125,7 +125,7 @@ export const DynamicAnimation: React.FC<DynamicAnimationProps> = ({
       whileHover={{ scale: 1.02, y: -5 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="w-full max-w-sm aspect-square bg-white dark:bg-gray-800 rounded-[3rem] shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col relative group"
+      className="w-full max-w-sm aspect-square bg-white dark:bg-gray-800 rounded-[3rem] shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col relative group z-0"
     >
       <div className="absolute top-8 left-8 z-10 flex items-center gap-2">
         <span className="px-4 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-[10px] font-black text-[#004e3a] dark:text-green-400 uppercase tracking-widest border border-gray-100 dark:border-gray-700">
