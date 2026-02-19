@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
 import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
+import BusinessModals from '../modals/BusinessModals';
 
 interface MainDashboardProps {
   onLogout: () => void;
@@ -71,10 +72,11 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [casaAtiva, setCasaAtiva] = useState(() => {
     return localStorage.getItem("casaAtiva") === "true";
   });
-  const [isSaldoVisivel, setIsSaldoVisivel] = useState(true);
+  const [isSaldoVisivel, setIsSaldoVisivel] = useState(false); // Começa oculto conforme pedido
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
+  const [showBusinessModal, setShowBusinessModal] = useState(false);
   const [showBalanceModal, setShowBalanceModal] = useState<{ open: boolean, type: 'kwh' | 'eco' }>({ open: false, type: 'kwh' });
   const [footerTabs, setFooterTabs] = useState<TabId[]>(() => {
     const saved = localStorage.getItem("footerTabs");
@@ -115,22 +117,33 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     return footerTabs.slice(0, count);
   }, [footerTabs]);
 
+  const activeTabLabel = useMemo(() => {
+    return allTabs.find(t => t.id === activeTab)?.label || 'Início';
+  }, [activeTab]);
+
   const renderNavbar = () => (
     <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 rounded-b-[2.5rem] ${theme === 'dark' ? 'bg-gray-900/90 border-gray-800' : 'bg-white/90 border-gray-100'} backdrop-blur-md shadow-lg border-b py-2`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
         <div className="flex items-center gap-8">
-          <img src="/assets/logo.png" alt="EcoEnergiza" className="h-12 md:h-16 w-auto object-contain" />
+          <img src="/assets/logo.png" alt="EcoEnergiza" className="h-12 md:h-16 w-auto object-contain md:scale-100 scale-[1.25] origin-left" />
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-2 pr-3 border-r border-gray-200 dark:border-gray-600">
+          {/* Saldos - Agora visíveis no mobile também */}
+          <div className="flex items-center gap-3 px-3 md:px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+            <div 
+              className="flex items-center gap-2 pr-3 border-r border-gray-200 dark:border-gray-600 cursor-pointer"
+              onClick={() => setShowBusinessModal(true)}
+            >
               <Zap className="w-4 h-4 text-yellow-500" />
-              <span className={`text-xs font-black ${!isSaldoVisivel ? 'blur-sm' : ''}`}>2.450 kWh</span>
+              <span className={`text-[10px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>2.450 kWh</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div 
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setShowBusinessModal(true)}
+            >
               <TrendingUp className="w-4 h-4 text-[#009865]" />
-              <span className={`text-xs font-black ${!isSaldoVisivel ? 'blur-sm' : ''}`}>R$ 1.240,00</span>
+              <span className={`text-[10px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>R$ 1.240,00</span>
             </div>
             <button onClick={() => setIsSaldoVisivel(!isSaldoVisivel)} className="ml-1 text-gray-400 hover:text-[#009865]">
               {isSaldoVisivel ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -155,7 +168,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               </div>
             </div>
 
-            <button onClick={onLogout} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
+            <button onClick={onLogout} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors hidden md:block">
               <LogOut className="w-5 h-5" />
             </button>
           </div>
@@ -199,7 +212,14 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
       case 'inicio':
         return (
           <div className="flex flex-col items-center gap-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full justify-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full justify-items-center relative">
+              {/* Título da Aba Selecionada - Discreto e centralizado acima do primeiro ícone */}
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 md:hidden">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] opacity-60">
+                  {activeTabLabel}
+                </span>
+              </div>
+
               <DynamicAnimation 
                 type="generation" 
                 state={usinaAtiva ? 'active' : 'inactive'} 
@@ -222,7 +242,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 label="Usina Particular" 
                 value="Gestão" unit="Ativa" 
                 isAtivo={true}
-                onClick={() => setShowPrivatePlantModal(true)} 
+                onClick={() => setShowPrivatePlantModal(true)}
               />
               <DynamicAnimation 
                 type="consultant" 
@@ -267,7 +287,8 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                     <span className="px-3 py-0.5 bg-white dark:bg-gray-800 rounded-full text-[10px] font-black text-[#009865] border border-gray-100 dark:border-gray-700 uppercase tracking-widest">Usuário Associado</span>
                   </div>
                 </div>
-                <div className="md:hidden flex flex-col items-end text-right">
+                {/* Ocultado no modo responsivo (md:hidden removido e substituído por hidden md:flex em outros lugares se necessário, mas aqui queremos ocultar o bloco de detalhes) */}
+                <div className="hidden md:flex flex-col items-end text-right">
                   <div className="flex items-center gap-1 mb-1">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     <span className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase tracking-widest">Sistema Online</span>
@@ -386,6 +407,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
       <GenerationModal isOpen={showGenModal} onClose={() => setShowGenModal(false)} />
       <ConsumptionModal isOpen={showConsModal} onClose={() => setShowConsModal(false)} />
       <PrivatePlantModal isOpen={showPrivatePlantModal} onClose={() => setShowPrivatePlantModal(false)} />
+      <BusinessModals isOpen={showBusinessModal} onClose={() => setShowBusinessModal(false)} />
       <BalanceModal isOpen={showBalanceModal.open} onClose={() => setShowBalanceModal({ ...showBalanceModal, open: false })} type={showBalanceModal.type} />
     </div>
   );
