@@ -32,6 +32,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setIsMobileInputOpen(false);
+        // O estado 'input' é mantido, preservando o que foi digitado
       }
     };
 
@@ -44,7 +45,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, isMobileInputOpen]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -88,14 +89,17 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
 
   return (
     <div className="fixed bottom-24 right-6 z-[9999] flex items-center justify-end" ref={containerRef}>
+      {/* Mobile Input Expansion */}
       <AnimatePresence>
         {isMobileInputOpen && (
           <motion.div
-            initial={{ width: 0, opacity: 0, x: 20 }}
-            animate={{ width: 'calc(100vw - 80px)', opacity: 1, x: 0 }}
-            exit={{ width: 0, opacity: 0, x: 20 }}
-            className="md:hidden absolute right-20 flex items-center bg-white dark:bg-gray-900 rounded-full shadow-2xl border border-[#009865]/20 overflow-hidden p-1"
+            initial={{ width: 64, opacity: 0, x: 0 }}
+            animate={{ width: 'calc(100vw - 48px)', opacity: 1, x: 0 }}
+            exit={{ width: 64, opacity: 0, x: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="md:hidden absolute right-0 flex items-center bg-white dark:bg-gray-900 rounded-full shadow-2xl border border-[#009865]/20 overflow-hidden h-16"
           >
+            {/* Input Field */}
             <input
               autoFocus
               type="text"
@@ -103,18 +107,32 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Alguma Dúvida Sobre Nossa Plataforma"
-              className="flex-1 bg-transparent border-none outline-none px-6 py-3 text-sm font-bold text-[#004e3a] dark:text-white placeholder:text-gray-400"
+              className="flex-1 bg-transparent border-none outline-none pl-6 pr-16 py-3 text-sm font-bold text-[#004e3a] dark:text-white placeholder:text-gray-400"
             />
+            
+            {/* Send Button (at the original position of the icon) */}
             <button
               onClick={handleSend}
-              className="w-10 h-10 bg-[#009865] text-white rounded-full flex items-center justify-center shadow-lg"
+              className="absolute right-2 w-12 h-12 bg-[#009865] text-white rounded-full flex items-center justify-center shadow-lg"
             >
               <Send className="w-5 h-5" />
             </button>
+
+            {/* Attendant Profile (moving to the left) */}
+            <motion.div 
+              initial={{ x: 0 }}
+              animate={{ x: 'calc(-100vw + 108px)' }}
+              exit={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute right-2 w-12 h-12 rounded-full bg-[#009865] border-2 border-white dark:border-gray-800 shadow-lg overflow-hidden flex items-center justify-center"
+            >
+              <img src="https://i.pravatar.cc/100?img=12" alt="Atendente" className="w-full h-full object-cover" />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -235,25 +253,28 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
         )}
       </AnimatePresence>
 
-      <motion.button 
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => {
-          if (window.innerWidth < 768) {
-            if (isOpen) {
-              setIsOpen(false);
+      {/* Main Copilot Button */}
+      {!isMobileInputOpen && (
+        <motion.button 
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+            if (window.innerWidth < 768) {
+              if (isOpen) {
+                setIsOpen(false);
+              } else {
+                setIsMobileInputOpen(true);
+              }
             } else {
-              setIsMobileInputOpen(!isMobileInputOpen);
+              setIsOpen(!isOpen);
             }
-          } else {
-            setIsOpen(!isOpen);
-          }
-        }}
-        className="w-16 h-16 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-2xl relative group shrink-0"
-      >
-        <div className="absolute inset-0 rounded-full bg-[#009865] animate-ping opacity-20 group-hover:opacity-40" />
-        {isOpen || isMobileInputOpen ? <X className="w-8 h-8" /> : <Sparkles className="w-8 h-8" />}
-      </motion.button>
+          }}
+          className="w-16 h-16 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-2xl relative group shrink-0"
+        >
+          <div className="absolute inset-0 rounded-full bg-[#009865] animate-ping opacity-20 group-hover:opacity-40" />
+          {isOpen ? <X className="w-8 h-8" /> : <Sparkles className="w-8 h-8" />}
+        </motion.button>
+      )}
     </div>
   );
 }
