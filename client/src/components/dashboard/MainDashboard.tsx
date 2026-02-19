@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Calendar, DollarSign, BookOpen, BarChart,
   Home as HomeIcon, PieChart, Award, Wallet, Search, Bell, Menu, Plus,
   Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2,
-  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp, History, Eye, EyeOff
+  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp, History, Eye, EyeOff, Coins
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
 import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
@@ -72,7 +72,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [casaAtiva, setCasaAtiva] = useState(() => {
     return localStorage.getItem("casaAtiva") === "true";
   });
-  const [isSaldoVisivel, setIsSaldoVisivel] = useState(false); // Começa oculto conforme pedido
+  const [isSaldoVisivel, setIsSaldoVisivel] = useState(false);
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
@@ -84,6 +84,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     return ['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])];
   });
   const [isFooterDrawerOpen, setIsFooterDrawerOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [editingTabIndex, setEditingTabIndex] = useState<number | null>(null);
   const [agendaView, setAgendaView] = useState<'list' | 'grid'>('list');
 
@@ -128,34 +129,40 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
           <img src="/assets/logo.png" alt="EcoEnergiza" className="h-12 md:h-16 w-auto object-contain md:scale-100 scale-[1.25] origin-left" />
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Saldos - Agora visíveis no mobile também */}
-          <div className="flex items-center gap-3 px-3 md:px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1 md:gap-3 px-2 md:px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 whitespace-nowrap overflow-hidden">
             <div 
-              className="flex items-center gap-2 pr-3 border-r border-gray-200 dark:border-gray-600 cursor-pointer"
+              className="flex items-center gap-1 md:gap-2 pr-2 md:pr-3 border-r border-gray-200 dark:border-gray-600 cursor-pointer"
               onClick={() => setShowBusinessModal(true)}
             >
-              <Zap className="w-4 h-4 text-yellow-500" />
-              <span className={`text-[10px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>2.450 kWh</span>
+              <Zap className="w-3 md:w-4 h-3 md:h-4 text-yellow-500 flex-shrink-0" />
+              <span className={`text-[9px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>2.450 kWh</span>
             </div>
             <div 
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-1 md:gap-2 pr-2 md:pr-3 border-r border-gray-200 dark:border-gray-600 cursor-pointer"
               onClick={() => setShowBusinessModal(true)}
             >
-              <TrendingUp className="w-4 h-4 text-[#009865]" />
-              <span className={`text-[10px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>R$ 1.240,00</span>
+              <TrendingUp className="w-3 md:w-4 h-3 md:h-4 text-[#009865] flex-shrink-0" />
+              <span className={`text-[9px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>R$ 1.240,00</span>
             </div>
-            <button onClick={() => setIsSaldoVisivel(!isSaldoVisivel)} className="ml-1 text-gray-400 hover:text-[#009865]">
-              {isSaldoVisivel ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            <div 
+              className="flex items-center gap-1 md:gap-2 cursor-pointer"
+              onClick={() => setShowBusinessModal(true)}
+            >
+              <Coins className="w-3 md:w-4 h-3 md:h-4 text-yellow-600 flex-shrink-0" />
+              <span className={`text-[9px] md:text-xs font-black ${!isSaldoVisivel ? 'blur-[3px]' : ''}`}>0,00 ECO</span>
+            </div>
+            <button onClick={() => setIsSaldoVisivel(!isSaldoVisivel)} className="ml-1 text-gray-400 hover:text-[#009865] flex-shrink-0">
+              {isSaldoVisivel ? <Eye className="w-3 md:w-4 h-3 md:h-4" /> : <EyeOff className="w-3 md:w-4 h-3 md:h-4" />}
             </button>
           </div>
 
-          <div className="flex items-center gap-3 pl-4 border-l border-gray-100 dark:border-gray-800">
+          <div className="flex items-center gap-2 md:gap-3 pl-2 md:pl-4 border-l border-gray-100 dark:border-gray-800">
             <button onClick={toggleTheme} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               {theme === 'light' ? <Moon className="w-5 h-5 text-gray-600" /> : <Sun className="w-5 h-5 text-yellow-400" />}
             </button>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 relative">
               <div className="text-right hidden sm:block">
                 <p className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase leading-none">Alex Silva</p>
                 <div className="flex items-center justify-end gap-1 mt-1">
@@ -163,9 +170,44 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                   <span className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Nível Prata</span>
                 </div>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-[#009865] border-2 border-white dark:border-gray-800 shadow-lg overflow-hidden">
+              <button 
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="w-10 h-10 rounded-2xl bg-[#009865] border-2 border-white dark:border-gray-800 shadow-lg overflow-hidden hover:opacity-90 transition-opacity"
+              >
                 <img src="https://i.pravatar.cc/100?img=12" alt="Perfil" className="w-full h-full object-cover" />
-              </div>
+              </button>
+
+              <AnimatePresence>
+                {isProfileMenuOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                    className={`absolute top-16 right-0 z-[150] bg-white dark:bg-gray-900 rounded-[1.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden min-w-[200px]`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button 
+                      onClick={() => { setIsProfileMenuOpen(false); }}
+                      className="w-full px-6 py-4 text-left text-sm font-black text-[#004e3a] dark:text-white uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 flex items-center gap-3"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Alterar Dados
+                    </button>
+                    <button 
+                      onClick={() => { setIsProfileMenuOpen(false); }}
+                      className="w-full px-6 py-4 text-left text-sm font-black text-[#004e3a] dark:text-white uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 flex items-center gap-3"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sair da Conta
+                    </button>
+                    <button 
+                      onClick={() => { setIsProfileMenuOpen(false); }}
+                      className="w-full px-6 py-4 text-left text-sm font-black text-red-500 uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-3"
+                    >
+                      <X className="w-4 h-4" />
+                      Excluir Conta
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <button onClick={onLogout} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors hidden md:block">
@@ -175,7 +217,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         </div>
       </div>
 
-      {/* Mobile Navigation Bar (Facebook Style) */}
       <div className="md:hidden flex items-center justify-around px-4 mt-2 border-t border-gray-100 dark:border-gray-800 pt-2">
         {visibleFooterTabs.map((tabId) => {
           const tab = allTabs.find(t => t.id === tabId);
@@ -212,14 +253,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
       case 'inicio':
         return (
           <div className="flex flex-col items-center gap-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full justify-items-center relative">
-              {/* Título da Aba Selecionada - Discreto e centralizado acima do primeiro ícone */}
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 md:hidden">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] opacity-60">
-                  {activeTabLabel}
-                </span>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full justify-items-center">
               <DynamicAnimation 
                 type="generation" 
                 state={usinaAtiva ? 'active' : 'inactive'} 
@@ -264,8 +298,20 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
       {renderNavbar()}
 
+      <motion.div 
+        key={activeTab}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="md:hidden fixed top-20 left-0 right-0 z-50 py-4 text-center border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md"
+      >
+        <p className="text-sm font-black text-[#004e3a] dark:text-white uppercase tracking-[0.3em]">
+          {activeTabLabel}
+        </p>
+      </motion.div>
+
       <main className="max-w-7xl mx-auto px-6 lg:px-12 pt-32 md:pt-40 pb-32">
-        <header className="mb-16">
+        <header className="mb-16 hidden md:block">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -287,8 +333,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                     <span className="px-3 py-0.5 bg-white dark:bg-gray-800 rounded-full text-[10px] font-black text-[#009865] border border-gray-100 dark:border-gray-700 uppercase tracking-widest">Usuário Associado</span>
                   </div>
                 </div>
-                {/* Ocultado no modo responsivo (md:hidden removido e substituído por hidden md:flex em outros lugares se necessário, mas aqui queremos ocultar o bloco de detalhes) */}
-                <div className="hidden md:flex flex-col items-end text-right">
+                <div className="flex flex-col items-end text-right">
                   <div className="flex items-center gap-1 mb-1">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     <span className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase tracking-widest">Sistema Online</span>
@@ -301,7 +346,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               </div>
             </div>
 
-            <div className="hidden md:flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4">
               <button 
                 onClick={() => setUsinaAtiva(!usinaAtiva)}
                 className={`px-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3 ${
@@ -323,7 +368,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         {renderTabContent()}
       </main>
 
-      {/* Footer Navigation (Desktop Only) */}
       <div className="hidden md:block fixed bottom-0 left-0 right-0 z-[200] p-6 pointer-events-none">
         <div className="max-w-lg mx-auto w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-white/20 dark:border-gray-800 p-2 flex items-center justify-between pointer-events-auto relative">
           {visibleFooterTabs.map((tabId, idx) => {
@@ -354,24 +398,23 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         </div>
       </div>
 
-      {/* Footer Drawer for Tab Customization */}
       <AnimatePresence>
         {isFooterDrawerOpen && (
-          <div className="fixed inset-0 z-[300] flex items-end justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsFooterDrawerOpen(false)}>
+          <div className="fixed inset-0 z-[300] flex items-start justify-center p-4 bg-black/60 backdrop-blur-sm pt-20" onClick={() => setIsFooterDrawerOpen(false)}>
             <motion.div 
-              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-              className="bg-white dark:bg-gray-900 rounded-t-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[80vh] overflow-y-auto custom-scrollbar"
+              initial={{ y: '-100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white dark:bg-gray-900 rounded-b-[2.5rem] w-full max-w-2xl p-8 relative shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full mx-auto mb-8"></div>
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">
                   {editingTabIndex !== null ? `Alterar Botão ${editingTabIndex + 1}` : 'Todas as Funcionalidades'}
                 </h3>
                 <button onClick={() => setIsFooterDrawerOpen(false)} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><X className="w-5 h-5 text-gray-400" /></button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
                 {allTabs.map((tab) => (
                   <button 
                     key={tab.id}
@@ -385,15 +428,15 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                       }
                       setIsFooterDrawerOpen(false);
                     }}
-                    className={`flex flex-col items-center gap-4 p-6 rounded-[2.5rem] border-2 transition-all ${activeTab === tab.id ? 'bg-[#009865]/10 border-[#009865] text-[#009865]' : 'bg-gray-50 dark:bg-gray-800 border-transparent hover:border-gray-200'}`}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-[1.5rem] border-2 transition-all ${activeTab === tab.id ? 'bg-[#009865]/10 border-[#009865] text-[#009865]' : 'bg-gray-50 dark:bg-gray-800 border-transparent hover:border-gray-200'}`}
                   >
-                    <tab.icon className="w-8 h-8" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+                    <tab.icon className="w-5 h-5" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-center line-clamp-2">{tab.label}</span>
                   </button>
                 ))}
               </div>
 
-              <div className="mt-10 pt-10 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
                 <button onClick={onLogout} className="flex items-center gap-3 text-red-500 font-black text-xs uppercase tracking-widest">
                   <LogOut className="w-5 h-5" /> Sair da Conta
                 </button>
