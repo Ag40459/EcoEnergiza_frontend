@@ -47,6 +47,29 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
     }
   }, [showCodeModal]);
 
+  useEffect(() => {
+    // Bloqueia a rolagem do body ao abrir o login
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+    
+    // Adiciona estilo para esconder scrollbars globalmente enquanto o login está aberto
+    const style = document.createElement('style');
+    style.id = 'hide-scrollbar-style';
+    style.innerHTML = `
+      *::-webkit-scrollbar { display: none !important; }
+      * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.body.style.overflow = originalStyle;
+      const styleElement = document.getElementById('hide-scrollbar-style');
+      if (styleElement) {
+        document.head.removeChild(styleElement);
+      }
+    };
+  }, []);
+
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -172,7 +195,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden touch-none">
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
@@ -183,7 +206,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-md p-10 relative shadow-2xl border border-white/10 z-10"
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-md p-6 md:p-10 relative shadow-2xl border border-white/10 z-10"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
@@ -197,7 +220,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
             <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden">
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white dark:bg-gray-900 rounded-[3.5rem] p-12 max-w-md w-full relative shadow-2xl border border-gray-100 dark:border-gray-800"
+                className="bg-white dark:bg-gray-900 rounded-[3.5rem] p-8 md:p-12 max-w-md w-full relative shadow-2xl border border-gray-100 dark:border-gray-800"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button onClick={() => setShowCodeModal(false)} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
