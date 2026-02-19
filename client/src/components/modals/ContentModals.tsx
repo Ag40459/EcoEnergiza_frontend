@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, CheckCircle2, ZoomIn, Phone, Mail, MapPin, QrCode } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, CheckCircle2, ZoomIn, MessageSquare, Mail, Phone, Send } from 'lucide-react';
 
 interface ContentModalProps {
   isOpen: boolean;
@@ -151,80 +151,62 @@ export function ContactModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl" onClick={onClose}>
       <motion.div 
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl border border-white/10"
+        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-8 md:p-12 relative shadow-2xl border border-white/10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+        <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors z-10">
           <X className="w-6 h-6 text-gray-400" />
         </button>
 
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter leading-none">Fale Conosco</h2>
-          <p className="text-sm font-bold text-gray-400 mt-4 uppercase tracking-widest">Estamos prontos para te atender</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <a 
-              href="https://wa.me/5581985967343" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-6 p-6 bg-green-50 dark:bg-green-900/20 rounded-[2rem] border border-green-100 dark:border-green-800/30 hover:scale-[1.02] transition-all no-underline group"
-            >
-              <div className="w-14 h-14 bg-[#009865] rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
-                <Phone className="w-7 h-7" />
+        <div className="flex flex-col md:flex-row gap-10 items-center">
+          <div className="flex-1 space-y-8 w-full">
+            <div className="text-center md:text-left">
+              <div className="w-14 h-14 bg-green-50 dark:bg-green-900/20 rounded-2xl flex items-center justify-center mb-4 mx-auto md:mx-0">
+                <MessageSquare className="w-7 h-7 text-[#009865]" />
               </div>
-              <div>
-                <p className="text-[10px] font-black text-[#009865] uppercase tracking-widest mb-1">WhatsApp</p>
-                <p className="text-lg font-black text-[#004e3a] dark:text-white">(81) 98596-7343</p>
-              </div>
-            </a>
-
-            <div className="flex items-center gap-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800/30 group">
-              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
-                <Mail className="w-7 h-7" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">E-mail</p>
-                <p className="text-lg font-black text-[#004e3a] dark:text-white">dev@ecolote.com.br</p>
-              </div>
+              <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400 uppercase tracking-tighter">Fale Conosco</h2>
+              <p className="text-sm font-bold text-gray-400 mt-1">Estamos prontos para te ajudar</p>
             </div>
 
-            <div className="flex items-center gap-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 group">
-              <div className="w-14 h-14 bg-gray-700 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
-                <MapPin className="w-7 h-7" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Localização</p>
-                <p className="text-lg font-black text-[#004e3a] dark:text-white">Recife, PE</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center border border-gray-100 dark:border-gray-700">
-            <div className="w-48 h-48 bg-white p-4 rounded-3xl shadow-inner mb-6 flex items-center justify-center">
-              <div className="w-full h-full bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden">
-                <QrCode className="w-32 h-32 text-[#004e3a] opacity-20" />
-                <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-1 p-2">
-                  {Array.from({ length: 64 }).map((_, i) => (
-                    <div key={i} className={`rounded-sm ${Math.random() > 0.5 ? 'bg-[#004e3a]' : 'bg-transparent'}`}></div>
-                  ))}
+            <div className="space-y-3">
+              <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-transparent hover:border-[#009865]/20 transition-all">
+                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-sm">
+                  <Mail className="w-5 h-5 text-[#009865]" />
                 </div>
+                <span className="text-sm font-black text-[#004e3a] dark:text-white">dev@ecolote.com.br</span>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-transparent hover:border-[#009865]/20 transition-all">
+                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-sm">
+                  <Phone className="w-5 h-5 text-[#009865]" />
+                </div>
+                <span className="text-sm font-black text-[#004e3a] dark:text-white">+55 81 98596-7343</span>
               </div>
             </div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Aponte a câmera</p>
-            <p className="text-sm font-black text-[#004e3a] dark:text-white">Escaneie para abrir o WhatsApp instantaneamente</p>
+
+            <div className="md:hidden flex flex-col items-center gap-2 py-4">
+              <div className="p-4 bg-white rounded-3xl shadow-xl border border-gray-100">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wa.me/5581985967343" alt="WhatsApp QR Code" className="w-32 h-32" />
+              </div>
+              <p className="text-[10px] font-black text-[#009865] uppercase tracking-widest">Aponte para o Zap</p>
+            </div>
+
+            <button className="w-full py-5 bg-[#004e3a] text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-green-900/20 flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all">
+              Enviar Mensagem <Send className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="hidden md:flex flex-col items-center gap-4 flex-shrink-0">
+            <div className="p-6 bg-white rounded-[3rem] shadow-2xl border border-gray-100 relative group">
+              <div className="absolute inset-0 bg-[#009865]/5 rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity" />
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wa.me/5581985967343" alt="WhatsApp QR Code" className="w-48 h-48 relative z-10" />
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-black text-[#004e3a] dark:text-white uppercase tracking-widest">Aponte para o Zap</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase mt-1">Atendimento Instantâneo</p>
+            </div>
           </div>
         </div>
-
-        <button 
-          onClick={onClose}
-          className="w-full mt-8 py-5 bg-[#004e3a] text-white rounded-[2rem] font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
-        >
-          Fechar
-        </button>
       </motion.div>
     </div>
   );

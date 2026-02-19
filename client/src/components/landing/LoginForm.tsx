@@ -172,7 +172,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
@@ -183,7 +183,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-md p-10 relative shadow-2xl border border-white/10"
+        className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-md p-10 relative shadow-2xl border border-white/10 z-10"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
@@ -194,7 +194,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
 
         <AnimatePresence>
           {showCodeModal && (
-            <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
+            <div className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl overflow-hidden">
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
                 className="bg-white dark:bg-gray-900 rounded-[3.5rem] p-12 max-w-md w-full relative shadow-2xl border border-gray-100 dark:border-gray-800"
