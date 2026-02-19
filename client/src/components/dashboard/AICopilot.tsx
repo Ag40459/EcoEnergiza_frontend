@@ -13,6 +13,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
     { role: 'ai', text: 'Olá! Sou a Sol, sua assistente virtual EcoEnergiza. Como posso te ajudar hoje?' }
   ]);
   const [input, setInput] = useState('');
+  const [isMobileInputOpen, setIsMobileInputOpen] = useState(false);
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -30,10 +31,11 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setIsMobileInputOpen(false);
       }
     };
 
-    if (isOpen) {
+    if (isOpen || isMobileInputOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -50,6 +52,11 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
     const userMsg = input.trim();
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setInput('');
+    
+    if (isMobileInputOpen) {
+      setIsMobileInputOpen(false);
+      setIsOpen(true);
+    }
 
     setTimeout(() => {
       let aiResponse = "Interessante! Posso te ajudar com mais detalhes sobre a EcoEnergiza. O que mais gostaria de saber?";
@@ -80,7 +87,34 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-[9999]" ref={containerRef}>
+    <div className="fixed bottom-24 right-6 z-[9999] flex items-center justify-end" ref={containerRef}>
+      <AnimatePresence>
+        {isMobileInputOpen && (
+          <motion.div
+            initial={{ width: 0, opacity: 0, x: 20 }}
+            animate={{ width: 'calc(100vw - 80px)', opacity: 1, x: 0 }}
+            exit={{ width: 0, opacity: 0, x: 20 }}
+            className="md:hidden absolute right-20 flex items-center bg-white dark:bg-gray-900 rounded-full shadow-2xl border border-[#009865]/20 overflow-hidden p-1"
+          >
+            <input
+              autoFocus
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Alguma Dúvida Sobre Nossa Plataforma"
+              className="flex-1 bg-transparent border-none outline-none px-6 py-3 text-sm font-bold text-[#004e3a] dark:text-white placeholder:text-gray-400"
+            />
+            <button
+              onClick={handleSend}
+              className="w-10 h-10 bg-[#009865] text-white rounded-full flex items-center justify-center shadow-lg"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -204,11 +238,21 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
       <motion.button 
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-2xl relative group"
+        onClick={() => {
+          if (window.innerWidth < 768) {
+            if (isOpen) {
+              setIsOpen(false);
+            } else {
+              setIsMobileInputOpen(!isMobileInputOpen);
+            }
+          } else {
+            setIsOpen(!isOpen);
+          }
+        }}
+        className="w-16 h-16 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-2xl relative group shrink-0"
       >
         <div className="absolute inset-0 rounded-full bg-[#009865] animate-ping opacity-20 group-hover:opacity-40" />
-        {isOpen ? <ChevronLeft className="w-8 h-8" /> : <Sparkles className="w-8 h-8" />}
+        {isOpen || isMobileInputOpen ? <X className="w-8 h-8" /> : <Sparkles className="w-8 h-8" />}
       </motion.button>
     </div>
   );
