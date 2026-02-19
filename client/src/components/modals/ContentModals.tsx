@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, CheckCircle2, ZoomIn } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, CheckCircle2, ZoomIn, Phone, Mail, MapPin, QrCode } from 'lucide-react';
 
 interface ContentModalProps {
   isOpen: boolean;
@@ -151,7 +151,8 @@ export function ContactModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl" onClick={onClose}>
       <motion.div 
-        initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         className="bg-white dark:bg-gray-900 rounded-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl border border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
@@ -160,21 +161,70 @@ export function ContactModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         </button>
 
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400 uppercase tracking-tighter">Fale Conosco</h2>
-          <p className="text-sm font-bold text-gray-400 mt-2">Estamos prontos para tirar suas dúvidas.</p>
+          <h2 className="text-4xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter leading-none">Fale Conosco</h2>
+          <p className="text-sm font-bold text-gray-400 mt-4 uppercase tracking-widest">Estamos prontos para te atender</p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input type="text" placeholder="Nome" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl outline-none font-bold text-sm dark:text-white border border-transparent focus:border-[#009865] transition-all" />
-            <input type="email" placeholder="E-mail" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl outline-none font-bold text-sm dark:text-white border border-transparent focus:border-[#009865] transition-all" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <a 
+              href="https://wa.me/5581985967343" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-6 p-6 bg-green-50 dark:bg-green-900/20 rounded-[2rem] border border-green-100 dark:border-green-800/30 hover:scale-[1.02] transition-all no-underline group"
+            >
+              <div className="w-14 h-14 bg-[#009865] rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
+                <Phone className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-[#009865] uppercase tracking-widest mb-1">WhatsApp</p>
+                <p className="text-lg font-black text-[#004e3a] dark:text-white">(81) 98596-7343</p>
+              </div>
+            </a>
+
+            <div className="flex items-center gap-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border border-blue-100 dark:border-blue-800/30 group">
+              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
+                <Mail className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">E-mail</p>
+                <p className="text-lg font-black text-[#004e3a] dark:text-white">dev@ecolote.com.br</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 group">
+              <div className="w-14 h-14 bg-gray-700 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform">
+                <MapPin className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Localização</p>
+                <p className="text-lg font-black text-[#004e3a] dark:text-white">Recife, PE</p>
+              </div>
+            </div>
           </div>
-          <input type="text" placeholder="Assunto" className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl outline-none font-bold text-sm dark:text-white border border-transparent focus:border-[#009865] transition-all" />
-          <textarea placeholder="Mensagem" rows={4} className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl outline-none font-bold text-sm dark:text-white border border-transparent focus:border-[#009865] transition-all resize-none"></textarea>
-          <button className="w-full py-5 bg-[#009865] text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-green-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
-            Enviar Mensagem
-          </button>
-        </form>
+
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center border border-gray-100 dark:border-gray-700">
+            <div className="w-48 h-48 bg-white p-4 rounded-3xl shadow-inner mb-6 flex items-center justify-center">
+              <div className="w-full h-full bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden">
+                <QrCode className="w-32 h-32 text-[#004e3a] opacity-20" />
+                <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-1 p-2">
+                  {Array.from({ length: 64 }).map((_, i) => (
+                    <div key={i} className={`rounded-sm ${Math.random() > 0.5 ? 'bg-[#004e3a]' : 'bg-transparent'}`}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Aponte a câmera</p>
+            <p className="text-sm font-black text-[#004e3a] dark:text-white">Escaneie para abrir o WhatsApp instantaneamente</p>
+          </div>
+        </div>
+
+        <button 
+          onClick={onClose}
+          className="w-full mt-8 py-5 bg-[#004e3a] text-white rounded-[2rem] font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+        >
+          Fechar
+        </button>
       </motion.div>
     </div>
   );

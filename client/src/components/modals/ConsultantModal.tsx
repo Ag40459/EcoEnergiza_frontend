@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Lock, Unlock, CheckCircle2, Play, WifiOff, ArrowRight, User, Mail, Phone, MapPin, Sparkles, LogIn, Award, BarChart, Users, DollarSign, Target, ChevronLeft
@@ -13,6 +13,7 @@ export default function ConsultantModal({ isOpen, onClose }: ConsultantModalProp
   const [activeStep, setActiveStep] = useState(1);
   const [lockedSteps, setLockedSteps] = useState<number[]>([2, 3, 4, 5, 6]);
   const [form, setForm] = useState({ nome: '', email: '', telefone: '', regiao: '' });
+  const firstInputRef = useRef<HTMLInputElement>(null);
 
   const steps = [
     { id: 1, title: "Bem-vindo à Oportunidade", icon: Sparkles },
@@ -22,6 +23,14 @@ export default function ConsultantModal({ isOpen, onClose }: ConsultantModalProp
     { id: 5, title: "Informações Básicas", icon: Users },
     { id: 6, title: "Confirmação", icon: CheckCircle2 },
   ];
+
+  useEffect(() => {
+    if (isOpen && activeStep === 5) {
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen, activeStep]);
 
   const unlockNext = (current: number) => {
     setLockedSteps(prev => prev.filter(s => s !== current + 1));
@@ -134,7 +143,7 @@ export default function ConsultantModal({ isOpen, onClose }: ConsultantModalProp
                     {step.id === 5 && (
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <input type="text" placeholder="Nome Completo" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
+                          <input ref={firstInputRef} type="text" placeholder="Nome Completo" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
                           <input type="email" placeholder="E-mail" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
                           <input type="text" placeholder="Telefone" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />
                           <input type="text" placeholder="Região de Atuação" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl outline-none font-bold text-sm dark:text-white" />

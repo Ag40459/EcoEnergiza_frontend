@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, CheckCircle2, Calculator, Zap, TrendingUp, Shield, Award, Sparkles, ArrowRight } from 'lucide-react';
 import { solarCalculator } from '@/lib/solarCalculator';
@@ -100,6 +100,15 @@ export default function BusinessModals({ isOpen, onClose }: BusinessModalProps) 
   const [bill, setBill] = useState('');
   const [calcResult, setCalcResult] = useState<any>(null);
   const [currentEquip, setCurrentEquip] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && step === 1) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen, step]);
 
   const handleClose = () => {
     setStep(1);
@@ -159,6 +168,7 @@ export default function BusinessModals({ isOpen, onClose }: BusinessModalProps) 
                   <div className="relative">
                     <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-gray-300">R$</span>
                     <input 
+                      ref={inputRef}
                       type="number" 
                       value={bill}
                       onChange={(e) => setBill(e.target.value)}
@@ -219,33 +229,49 @@ export default function BusinessModals({ isOpen, onClose }: BusinessModalProps) 
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   src={equipamentos[currentEquip].img} 
-                  className="w-full h-full object-cover"
                   alt={equipamentos[currentEquip].nome}
+                  className="w-full h-full object-cover"
                 />
               </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-10 left-10 right-10">
-                <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">{equipamentos[currentEquip].nome}</h4>
-                <p className="text-xs font-bold text-gray-300 leading-relaxed">{equipamentos[currentEquip].desc}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div className="absolute bottom-8 left-8 right-8">
+                <h4 className="text-xl font-black text-white mb-2">{equipamentos[currentEquip].nome}</h4>
+                <p className="text-xs font-bold text-white/60">{equipamentos[currentEquip].desc}</p>
               </div>
-              <div className="absolute top-10 right-10 flex gap-2">
-                <button onClick={() => setCurrentEquip(prev => (prev === 0 ? equipamentos.length - 1 : prev - 1))} className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl text-white transition-all"><ChevronLeft className="w-5 h-5" /></button>
-                <button onClick={() => setCurrentEquip(prev => (prev === equipamentos.length - 1 ? 0 : prev + 1))} className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl text-white transition-all"><ChevronRight className="w-5 h-5" /></button>
+              <div className="absolute top-8 right-8 flex gap-2">
+                <button 
+                  onClick={() => setCurrentEquip(prev => (prev === 0 ? equipamentos.length - 1 : prev - 1))}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => setCurrentEquip(prev => (prev === equipamentos.length - 1 ? 0 : prev + 1))}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
-                <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-center shrink-0">
-                  <Shield className="w-5 h-5 text-[#009865]" />
+            <div className="grid grid-cols-1 gap-4">
+              <div className="p-6 bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div className="w-12 h-12 bg-green-50 dark:bg-green-900/20 rounded-2xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#009865]" />
                 </div>
-                <p className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase leading-tight">Garantia de 25 Anos</p>
+                <div>
+                  <p className="text-xs font-black text-[#004e3a] dark:text-white uppercase">Garantia Total</p>
+                  <p className="text-[10px] font-bold text-gray-400">25 anos de performance garantida.</p>
+                </div>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
-                <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center shrink-0">
-                  <TrendingUp className="w-5 h-5 text-blue-500" />
+              <div className="p-6 bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center">
+                  <Award className="w-6 h-6 text-blue-600" />
                 </div>
-                <p className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase leading-tight">Valorização Imobiliária</p>
+                <div>
+                  <p className="text-xs font-black text-[#004e3a] dark:text-white uppercase">Instalação Premium</p>
+                  <p className="text-[10px] font-bold text-gray-400">Equipe técnica própria e certificada.</p>
+                </div>
               </div>
             </div>
           </div>

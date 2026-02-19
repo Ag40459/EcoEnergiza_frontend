@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, Lock, ChevronRight, ShieldCheck, ArrowLeft, Smartphone } from "lucide-react";
+import { X, Mail, Lock, ChevronRight, ShieldCheck, Smartphone } from "lucide-react";
 
 interface LoginFormProps {
   initialStep: "email" | "code" | "other";
@@ -16,10 +16,36 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   const [code, setCode] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [showCodeModal, setShowCodeModal] = useState(false);
+  
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const codeInputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null)
+  ];
 
   useEffect(() => {
     setStep(initialStep);
   }, [initialStep]);
+
+  useEffect(() => {
+    if (step === "email" || step === "other") {
+      setTimeout(() => {
+        if (step === "email") emailInputRef.current?.focus();
+        else if (step === "other") emailInputRef.current?.focus();
+      }, 100);
+    }
+  }, [step]);
+
+  useEffect(() => {
+    if (showCodeModal) {
+      setTimeout(() => {
+        codeInputRefs[0].current?.focus();
+      }, 100);
+    }
+  }, [showCodeModal]);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +66,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
     setCode(newCode);
 
     if (numericValue && index < 3) {
-      const nextInput = document.getElementById(`code-${index + 1}`);
-      nextInput?.focus();
+      codeInputRefs[index + 1].current?.focus();
     }
   };
 
@@ -80,6 +105,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
+                ref={emailInputRef}
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com" required
                 className="w-full pl-12 pr-4 py-5 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none font-black transition-all"
@@ -112,6 +138,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
+                ref={emailInputRef}
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-mail" required
                 className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none font-black"
@@ -120,6 +147,7 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input 
+                ref={passwordInputRef}
                 type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Senha" required
                 className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border-2 border-transparent focus:border-[#009865] outline-none font-black"
@@ -188,7 +216,8 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
                   <div className="flex justify-between gap-2">
                     {code.map((digit, idx) => (
                       <input 
-                        key={idx} id={`code-${idx}`}
+                        key={idx} 
+                        ref={codeInputRefs[idx]}
                         type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1} value={digit}
                         onChange={(e) => handleCodeChange(idx, e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && idx === 3 && handleLoginFinal()}

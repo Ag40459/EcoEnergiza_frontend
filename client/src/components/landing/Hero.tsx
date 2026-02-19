@@ -44,7 +44,7 @@ export default function Hero({ onStart }: HeroProps) {
   return (
     <section
       id="inicio"
-      className="w-full h-full flex items-center justify-center p-6 lg:p-20 overflow-hidden relative"
+      className="w-full min-h-screen flex items-center justify-center p-6 lg:p-20 overflow-hidden relative pt-24 md:pt-32 pb-12"
       style={{
         background: coresGradiente[corIndex],
         transition: "background 3s ease-in-out",
@@ -91,7 +91,7 @@ export default function Hero({ onStart }: HeroProps) {
                   <span className="text-[10px] font-black text-[#004e3a] uppercase">Seguro</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <Zap className="w-5 h-5 text-yellow-500" mb-1 />
+                  <Zap className="w-5 h-5 text-yellow-500" />
                   <span className="text-[10px] font-black text-[#004e3a] uppercase">Rápido</span>
                 </div>
               </div>

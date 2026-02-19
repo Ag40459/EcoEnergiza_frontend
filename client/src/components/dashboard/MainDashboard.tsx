@@ -6,7 +6,7 @@ import {
   LayoutDashboard, Users, Calendar, DollarSign, BookOpen, BarChart,
   Home as HomeIcon, PieChart, Award, Wallet, Search, Bell, Menu, Plus,
   Smartphone, CreditCard, Landmark, QrCode, FileCheck, Camera, CheckCircle2,
-  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp, History
+  Factory, Settings2, Edit3, Briefcase, Filter, Search as SearchIcon, Clock, TrendingUp, History, Eye, EyeOff
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
 import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
@@ -71,6 +71,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   const [casaAtiva, setCasaAtiva] = useState(() => {
     return localStorage.getItem("casaAtiva") === "true";
   });
+  const [isSaldoVisivel, setIsSaldoVisivel] = useState(true);
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
@@ -114,6 +115,55 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
     return footerTabs.slice(0, count);
   }, [footerTabs]);
 
+  const renderNavbar = () => (
+    <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 rounded-b-[2.5rem] ${theme === 'dark' ? 'bg-gray-900/90 border-gray-800' : 'bg-white/90 border-gray-100'} backdrop-blur-md shadow-lg border-b py-2`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16">
+        <div className="flex items-center gap-8">
+          <img src="/assets/logo.png" alt="EcoEnergiza" className="h-12 md:h-16 w-auto object-contain" />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-2 pr-3 border-r border-gray-200 dark:border-gray-600">
+              <Zap className="w-4 h-4 text-yellow-500" />
+              <span className={`text-xs font-black ${!isSaldoVisivel ? 'blur-sm' : ''}`}>2.450 kWh</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#009865]" />
+              <span className={`text-xs font-black ${!isSaldoVisivel ? 'blur-sm' : ''}`}>R$ 1.240,00</span>
+            </div>
+            <button onClick={() => setIsSaldoVisivel(!isSaldoVisivel)} className="ml-1 text-gray-400 hover:text-[#009865]">
+              {isSaldoVisivel ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 pl-4 border-l border-gray-100 dark:border-gray-800">
+            <button onClick={toggleTheme} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              {theme === 'light' ? <Moon className="w-5 h-5 text-gray-600" /> : <Sun className="w-5 h-5 text-yellow-400" />}
+            </button>
+            
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <p className="text-[10px] font-black text-[#004e3a] dark:text-white uppercase leading-none">Alex Silva</p>
+                <div className="flex items-center justify-end gap-1 mt-1">
+                  <Award className="w-3 h-3 text-yellow-500" />
+                  <span className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">Nível Prata</span>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-2xl bg-[#009865] border-2 border-white dark:border-gray-800 shadow-lg overflow-hidden">
+                <img src="https://i.pravatar.cc/100?img=12" alt="Perfil" className="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <button onClick={onLogout} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'inicio':
@@ -124,7 +174,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 type="generation" 
                 state={usinaAtiva ? 'active' : 'inactive'} 
                 label="Geração de Energia" 
-                value={usinaAtiva ? "124.5" : "0.0"} unit="kWh" 
+                value={isSaldoVisivel && usinaAtiva ? "124.5" : "0.0"} unit="kWh" 
                 isAtivo={usinaAtiva}
                 onClick={() => setShowGenModal(true)} 
               />
@@ -132,7 +182,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 type="consumption" 
                 state={casaAtiva ? 'active' : 'inactive'} 
                 label="Consumo da Casa" 
-                value={casaAtiva ? "842.1" : "0.0"} unit="kWh" 
+                value={isSaldoVisivel && casaAtiva ? "842.1" : "0.0"} unit="kWh" 
                 isAtivo={casaAtiva}
                 onClick={() => setShowConsModal(true)} 
               />
@@ -286,23 +336,22 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                         <p className="text-lg font-black text-[#009865]">{item.hora}</p>
                       </div>
                       <div className="flex-1">
-                        <p className="font-black text-[#004e3a] dark:text-white">{item.tarefa}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">{item.tipo}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-[8px] font-black uppercase text-gray-500">{item.tipo}</span>
+                          <h4 className="text-sm font-black text-[#004e3a] dark:text-white">{item.tarefa}</h4>
+                        </div>
+                        <p className="text-xs text-gray-400 font-bold">{item.desc}</p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-300" />
+                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-[#009865] transition-colors" />
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {agendaItems.map((item, i) => (
-                    <div key={i} className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-[2.5rem] border-2 border-transparent hover:border-[#009865] transition-all group relative overflow-hidden">
-                      <div className="absolute top-0 right-0 p-4">
-                        <span className="px-3 py-1 bg-[#009865]/10 text-[#009865] rounded-full text-[8px] font-black uppercase">{item.tipo}</span>
-                      </div>
-                      <p className="text-2xl font-black text-[#009865] mb-2">{item.hora}</p>
-                      <p className="font-black text-[#004e3a] dark:text-white mb-2">{item.tarefa}</p>
-                      <p className="text-xs text-gray-400 font-medium leading-relaxed">{item.desc}</p>
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: 31 }).map((_, i) => (
+                    <div key={i} className={`aspect-square rounded-2xl border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${i + 1 === 14 ? 'bg-[#009865] border-[#009865] text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-900 border-transparent hover:border-gray-200'}`}>
+                      <span className="text-[10px] font-black">{i + 1}</span>
+                      {i + 1 === 14 && <div className="w-1 h-1 bg-white rounded-full"></div>}
                     </div>
                   ))}
                 </div>
@@ -310,247 +359,162 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
             </div>
           </motion.div>
         );
-      case 'adm':
-        if (!isAdmin) return <div className="text-center py-12 text-gray-400">Acesso negado</div>;
-        return (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-[3.5rem] p-10 shadow-2xl border border-gray-100 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-10">
-                <div>
-                  <h2 className="text-3xl font-black text-[#004e3a] dark:text-green-400">Painel Administrativo</h2>
-                  <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Gestão de Conteúdo e Usuários</p>
-                </div>
-                <Settings2 className="w-12 h-12 text-purple-600" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {[
-                  { label: 'Editar Textos', icon: Edit3, color: 'bg-blue-500' },
-                  { label: 'Gestão de Leads', icon: Users, color: 'bg-green-500' },
-                  { label: 'Configurações', icon: Settings, color: 'bg-orange-500' },
-                  { label: 'Performance', icon: BarChart, color: 'bg-pink-500' },
-                  { label: 'Agenda Geral', icon: Calendar, color: 'bg-purple-500' },
-                  { label: 'Financeiro', icon: DollarSign, color: 'bg-yellow-500' },
-                ].map((card, i) => (
-                  <button key={i} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-gray-900 rounded-[2.5rem] border border-transparent hover:border-purple-500 transition-all group">
-                    <div className={`w-16 h-16 rounded-2xl ${card.color} flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}>
-                      <card.icon className="w-8 h-8 text-white" />
-                    </div>
-                    <span className="font-black text-xs uppercase dark:text-white">{card.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        );
-      case 'perfil':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-2xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-[3rem] p-8 shadow-xl border border-gray-100 dark:border-gray-700">
-              <div className="flex items-center gap-6 mb-8">
-                <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-4 border-[#009865]">
-                  <img src="https://i.pravatar.cc/150?u=alex" alt="Avatar" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col">
-                  <h2 className="text-2xl font-black text-[#004e3a] dark:text-white leading-tight">{userName}</h2>
-                  <p className="text-sm font-bold text-gray-400">alex.silva@email.com</p>
-                  {isAdmin && (
-                    <button 
-                      onClick={() => setActiveTab('adm')}
-                      className="mt-2 self-start px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-[10px] font-black uppercase tracking-wider"
-                    >
-                      Acessar Painel ADM
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4">
-                {[
-                  { label: 'Meus Dados', icon: User, tab: 'dados' },
-                  { label: 'Segurança', icon: Shield, tab: 'seguranca' },
-                  { label: 'Personalizar Rodapé', icon: Settings, action: 'customize' },
-                ].map((item, idx) => (
-                  <button 
-                    key={idx} 
-                    onClick={() => {
-                      if (item.tab) setActiveTab(item.tab as TabId);
-                      if (item.action === 'customize') {
-                        const availableTabs: TabId[] = ['inicio', 'moedas', 'consultor', 'perfil', 'adm', 'seguranca', 'indicacoes'];
-                        const currentIdx = availableTabs.indexOf(footerTabs[1]);
-                        const nextTabs: TabId[] = ['inicio', availableTabs[(currentIdx + 1) % availableTabs.length], 'seguranca', 'perfil'];
-                        setFooterTabs(nextTabs);
-                        alert("Rodapé alterado para: " + nextTabs.join(', '));
-                      }
-                    }}
-                    className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <item.icon className="w-5 h-5 text-[#009865]" />
-                      <span className="font-black text-sm text-[#004e3a] dark:text-white">{item.label}</span>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
-                  </button>
-                ))}
-              </div>
-              <button 
-                onClick={onLogout}
-                className="w-full mt-8 py-4 flex items-center justify-center gap-3 text-red-500 font-black text-sm border-2 border-red-50 dark:border-red-900/20 rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
-              >
-                <LogOut className="w-5 h-5" /> Sair da Conta
-              </button>
-            </div>
-          </motion.div>
-        );
-      case 'seguranca':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-2xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-[3rem] p-8 shadow-xl border border-gray-100 dark:border-gray-700">
-              <div className="text-center mb-8">
-                <Shield className="w-16 h-16 text-[#009865] mx-auto mb-4" />
-                <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Segurança e Verificação</h2>
-                <p className="text-sm text-gray-400 font-bold">Mantenha sua conta protegida e verificada</p>
-              </div>
-              <div className="space-y-4">
-                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-                  <FileCheck className="w-10 h-10 text-gray-400" />
-                  <div className="text-center">
-                    <p className="font-black text-[#004e3a] dark:text-white">Envio de Documentos</p>
-                    <p className="text-xs text-gray-400">RG, CNH ou Passaporte (Frente e Verso)</p>
-                  </div>
-                  <button className="px-6 py-2 bg-[#009865] text-white rounded-full font-black text-xs uppercase">Fazer Upload</button>
-                </div>
-                <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center gap-4">
-                  <Camera className="w-10 h-10 text-gray-400" />
-                  <div className="text-center">
-                    <p className="font-black text-[#004e3a] dark:text-white">Reconhecimento Facial</p>
-                    <p className="text-xs text-gray-400">Selfie para validação de identidade</p>
-                  </div>
-                  <button className="px-6 py-2 bg-[#004e3a] text-white rounded-full font-black text-xs uppercase">Iniciar Biometria</button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        );
       default:
-        return <div className="text-center py-20 font-black text-[#004e3a] dark:text-white uppercase">Em breve: {activeTab}</div>;
+        return (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mb-6">
+              <Settings className="w-10 h-10 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">Em Desenvolvimento</h2>
+            <p className="text-sm font-bold text-gray-400 mt-2">Esta funcionalidade estará disponível em breve.</p>
+          </div>
+        );
     }
   };
 
-  const handleTabChange = (index: number, newTabId: TabId) => {
-    const newTabs = [...footerTabs];
-    newTabs[index] = newTabId;
-    setFooterTabs(newTabs);
-    setEditingTabIndex(null);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-32">
-      <nav className="fixed top-0 left-0 right-0 z-[50] bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 rounded-b-[2.5rem] px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <img src="/assets/logo.png" alt="Logo" className="h-12 w-auto" />
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setShowBalanceModal({ open: true, type: 'kwh' })}
-              className="flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-2xl border border-green-100 hover:scale-105 transition-transform"
-            >
-              <Zap className="w-4 h-4 text-[#009865]" />
-              <span className="text-xs font-black text-[#004e3a] dark:text-green-400">{usinaAtiva ? "124.5" : "0.0"} kWh</span>
-            </button>
-            <button 
-              onClick={() => setShowBalanceModal({ open: true, type: 'eco' })}
-              className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-2 rounded-2xl border border-yellow-100 hover:scale-105 transition-transform"
-            >
-              <Wallet className="w-4 h-4 text-yellow-600" />
-              <span className="text-xs font-black text-yellow-700 dark:text-yellow-500">850 ECO</span>
-            </button>
-            <button onClick={toggleTheme} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
-              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-yellow-400" />}
-            </button>
-          </div>
-        </div>
-      </nav>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-950' : 'bg-[#f8faf9]'} pb-32`}>
+      {renderNavbar()}
+      
+      <main className="max-w-7xl mx-auto px-6 lg:px-12 pt-24">
+        <header className="mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="px-4 py-1.5 bg-[#009865]/10 rounded-full border border-[#009865]/20">
+                  <span className="text-[10px] font-black text-[#009865] uppercase tracking-widest">Status: Sistema Online</span>
+                </div>
+                <div className="flex -space-x-2">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 bg-gray-200 overflow-hidden">
+                      <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt="User" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <h1 className="text-5xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter leading-none">
+                Olá, bem-vindo!
+              </h1>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 rounded-2xl bg-[#009865] border-2 border-white dark:border-gray-800 shadow-xl overflow-hidden">
+                    <img src="https://i.pravatar.cc/100?img=12" alt="Perfil" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-black text-[#004e3a] dark:text-white">Alex Silva</p>
+                    <span className="px-3 py-0.5 bg-white dark:bg-gray-800 rounded-full text-[10px] font-black text-[#009865] border border-gray-100 dark:border-gray-700 uppercase tracking-widest">Usuário Associado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <main className="max-w-7xl mx-auto px-6 pt-32">
+            <div className="flex flex-wrap gap-4">
+              <button 
+                onClick={() => setUsinaAtiva(!usinaAtiva)}
+                className={`px-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl transition-all flex items-center gap-3 ${
+                  usinaAtiva 
+                    ? 'bg-[#004e3a] text-white' 
+                    : 'bg-white dark:bg-gray-800 text-[#004e3a] dark:text-white border border-gray-100 dark:border-gray-700'
+                }`}
+              >
+                {usinaAtiva ? <Shield className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                {usinaAtiva ? 'Sistema Ativo' : 'Ativar Sistema'}
+              </button>
+              <button className="p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 text-[#004e3a] dark:text-white shadow-lg">
+                <Bell className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </header>
+
         {renderTabContent()}
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 z-[100]">
-        <AnimatePresence>
-          {isFooterDrawerOpen && (
+      {/* Footer Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-[200] p-6 pointer-events-none">
+        <div className="max-w-lg mx-auto w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] border border-white/20 dark:border-gray-800 p-2 flex items-center justify-between pointer-events-auto relative">
+          {visibleFooterTabs.map((tabId, idx) => {
+            const tab = allTabs.find(t => t.id === tabId);
+            if (!tab) return null;
+            return (
+              <button 
+                key={tabId}
+                onClick={() => setActiveTab(tabId)}
+                onContextMenu={(e) => { e.preventDefault(); setEditingTabIndex(idx); setIsFooterDrawerOpen(true); }}
+                className={`flex-1 flex flex-col items-center justify-center py-3 rounded-[2.5rem] transition-all relative ${activeTab === tabId ? 'bg-[#004e3a] text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+              >
+                <tab.icon className={`w-5 h-5 ${activeTab === tabId ? 'scale-110' : ''} transition-transform`} />
+                <span className="text-[8px] font-black uppercase tracking-widest mt-1">{tab.label}</span>
+                {activeTab === tabId && (
+                  <motion.div layoutId="footer-active" className="absolute -bottom-1 w-1 h-1 bg-white rounded-full" />
+                )}
+              </button>
+            );
+          })}
+          
+          <button 
+            onClick={() => { setEditingTabIndex(null); setIsFooterDrawerOpen(true); }}
+            className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-[#009865] hover:text-white transition-all ml-2"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Footer Drawer for Tab Customization */}
+      <AnimatePresence>
+        {isFooterDrawerOpen && (
+          <div className="fixed inset-0 z-[300] flex items-end justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsFooterDrawerOpen(false)}>
             <motion.div 
-              initial={{ y: 300 }} animate={{ y: 0 }} exit={{ y: 300 }}
-              className="bg-white dark:bg-gray-900 rounded-t-[3rem] p-8 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] border-t border-gray-100 dark:border-gray-800"
+              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+              className="bg-white dark:bg-gray-900 rounded-t-[3.5rem] w-full max-w-2xl p-10 relative shadow-2xl max-h-[80vh] overflow-y-auto custom-scrollbar"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-black text-[#004e3a] dark:text-white uppercase tracking-widest text-sm">Personalizar Rodapé</h3>
-                <button onClick={() => setIsFooterDrawerOpen(false)} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><X className="w-4 h-4" /></button>
+              <div className="w-12 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full mx-auto mb-8"></div>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-2xl font-black text-[#004e3a] dark:text-white uppercase tracking-tighter">
+                  {editingTabIndex !== null ? `Alterar Botão ${editingTabIndex + 1}` : 'Todas as Funcionalidades'}
+                </h3>
+                <button onClick={() => setIsFooterDrawerOpen(false)} className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><X className="w-5 h-5 text-gray-400" /></button>
               </div>
-              <div className="grid grid-cols-4 gap-4">
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {allTabs.map((tab) => (
                   <button 
                     key={tab.id}
-                    onClick={() => editingTabIndex !== null && handleTabChange(editingTabIndex, tab.id)}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${footerTabs.includes(tab.id) ? 'bg-green-50 border-[#009865]' : 'bg-gray-50 border-transparent'} border-2`}
+                    onClick={() => {
+                      if (editingTabIndex !== null) {
+                        const newTabs = [...footerTabs];
+                        newTabs[editingTabIndex] = tab.id;
+                        setFooterTabs(newTabs);
+                      } else {
+                        setActiveTab(tab.id);
+                      }
+                      setIsFooterDrawerOpen(false);
+                    }}
+                    className={`flex flex-col items-center gap-4 p-6 rounded-[2.5rem] border-2 transition-all ${activeTab === tab.id ? 'bg-[#009865]/10 border-[#009865] text-[#009865]' : 'bg-gray-50 dark:bg-gray-800 border-transparent hover:border-gray-200'}`}
                   >
-                    <tab.icon className={`w-6 h-6 ${footerTabs.includes(tab.id) ? 'text-[#009865]' : 'text-gray-400'}`} />
-                    <span className="text-[10px] font-black uppercase">{tab.label}</span>
+                    <tab.icon className="w-8 h-8" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
                   </button>
                 ))}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-gray-800 px-8 py-4 flex items-center justify-around relative">
-          <button 
-            onClick={() => setIsFooterDrawerOpen(!isFooterDrawerOpen)}
-            className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#009865] rounded-full flex items-center justify-center text-white shadow-lg border-4 border-white dark:border-gray-950 hover:scale-110 transition-transform z-10"
-          >
-            {isFooterDrawerOpen ? <X className="w-6 h-6" /> : <ChevronUp className="w-6 h-6" />}
-          </button>
-          
-          <div className="flex w-full items-center justify-around">
-            {visibleFooterTabs.map((tabId, idx) => {
-              const tab = allTabs.find(t => t.id === tabId);
-              if (!tab) return null;
-              return (
-                <button 
-                  key={tabId}
-                  onClick={() => {
-                    if (isFooterDrawerOpen) setEditingTabIndex(idx);
-                    else setActiveTab(tabId);
-                  }}
-                  className={`flex flex-col items-center gap-1 transition-all ${activeTab === tabId ? 'text-[#009865] scale-110' : 'text-gray-400'}`}
-                >
-                  <tab.icon className="w-6 h-6" />
-                  <span className="text-[10px] font-black uppercase tracking-tighter">{tab.label}</span>
-                  {editingTabIndex === idx && <div className="w-1 h-1 bg-red-500 rounded-full mt-1 animate-pulse" />}
+              <div className="mt-10 pt-10 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                <button onClick={onLogout} className="flex items-center gap-3 text-red-500 font-black text-xs uppercase tracking-widest">
+                  <LogOut className="w-5 h-5" /> Sair da Conta
                 </button>
-              );
-            })}
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">EcoEnergiza v2.4.0</p>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </footer>
+        )}
+      </AnimatePresence>
 
-      <GenerationModal 
-        isOpen={showGenModal} 
-        onClose={() => setShowGenModal(false)} 
-        onActivate={() => setUsinaAtiva(true)}
-        onRedirectToTab={(tab) => setActiveTab(tab)}
-      />
-      <ConsumptionModal 
-        isOpen={showConsModal} 
-        onClose={() => setShowConsModal(false)} 
-        onActivate={() => setCasaAtiva(true)}
-      />
-      <PrivatePlantModal 
-        isOpen={showPrivatePlantModal} 
-        onClose={() => setShowPrivatePlantModal(false)} 
-      />
-      <BalanceModal 
-        isOpen={showBalanceModal.open} 
-        onClose={() => setShowBalanceModal({ ...showBalanceModal, open: false })} 
-        type={showBalanceModal.type} 
-      />
+      <GenerationModal isOpen={showGenModal} onClose={() => setShowGenModal(false)} />
+      <ConsumptionModal isOpen={showConsModal} onClose={() => setShowConsModal(false)} />
+      <PrivatePlantModal isOpen={showPrivatePlantModal} onClose={() => setShowPrivatePlantModal(false)} />
+      <BalanceModal isOpen={showBalanceModal.open} onClose={() => setShowBalanceModal({ ...showBalanceModal, open: false })} type={showBalanceModal.type} />
     </div>
   );
 }

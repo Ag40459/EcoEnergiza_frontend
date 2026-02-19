@@ -70,8 +70,8 @@ export default function Navbar({ onOpenLogin, theme, toggleTheme }: NavbarProps)
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 rounded-b-[2.5rem] ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-2' : 'bg-white dark:bg-gray-900 py-4'} border-b border-gray-100 dark:border-gray-800`}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-20">
+      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 rounded-b-[2.5rem] ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-1' : 'bg-white dark:bg-gray-900 py-2'} border-b border-gray-100 dark:border-gray-800`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-14 md:h-16">
           <a href="/" className="flex items-center no-underline shrink-0">
             <img src="/assets/logo.png" alt="EcoEnergiza" className="h-28 md:h-36 lg:h-44 w-auto object-contain transition-all" style={{ marginTop: "10px" }} />
           </a>

@@ -17,6 +17,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
 
   useEffect(() => {
@@ -24,6 +25,24 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -49,15 +68,10 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   };
 
   const handleEndSession = () => {
-    const confirmEmail = window.confirm("Deseja receber a cópia deste atendimento por e-mail?");
-    if (confirmEmail) {
-      alert("Histórico enviado para seu e-mail com sucesso!");
-    }
     setShowEvaluation(true);
   };
 
   const submitEvaluation = () => {
-    alert("Obrigado pela sua avaliação!");
     setMessages([{ role: 'ai', text: 'Atendimento encerrado. Como posso te ajudar agora?' }]);
     setShowEvaluation(false);
     setRating(0);
@@ -66,7 +80,7 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-[9999]">
+    <div className="fixed bottom-24 right-6 z-[9999]" ref={containerRef}>
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -97,7 +111,13 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={handleEndSession} className="p-2 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors text-gray-400">
+                <button 
+                  onClick={handleEndSession} 
+                  className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline"
+                >
+                  Finalizar Chat
+                </button>
+                <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
