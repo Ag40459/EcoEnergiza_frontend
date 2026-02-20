@@ -10,7 +10,14 @@ import {
   Eye, EyeOff, Camera as CameraIcon, UserCheck
 } from 'lucide-react';
 import { DynamicAnimation } from '../animations/DynamicAnimation';
-import { GenerationModal, ConsumptionModal, PrivatePlantModal } from '../modals/BusinessModals';
+import { 
+  GenerationModal, 
+  ConsumptionModal, 
+  PrivatePlantModal,
+  ProfileModal,
+  SecurityModal,
+  ConsultantModal
+} from '../modals/BusinessModals';
 
 interface MainDashboardProps {
   onLogout: () => void;
@@ -28,25 +35,25 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
   });
   const [usinaAtiva, setUsinaAtiva] = useState(() => localStorage.getItem("usinaAtiva") === "true");
   const [casaAtiva, setCasaAtiva] = useState(() => localStorage.getItem("casaAtiva") === "true");
+  
+  // Modais
   const [showGenModal, setShowGenModal] = useState(false);
   const [showConsModal, setShowConsModal] = useState(false);
   const [showPrivatePlantModal, setShowPrivatePlantModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showConsultantModal, setShowConsultantModal] = useState(false);
   
   // Lógica de Saldos
   const [showEcoBalance, setShowEcoBalance] = useState(true);
   const [ecoBalance] = useState("1.250");
   const [kwhBalance] = useState("45.8");
 
-  // Perfil / KYC Modal
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [kycStatus, setKycStatus] = useState<'pending' | 'completed'>('pending');
-
   const [footerTabs, setFooterTabs] = useState<TabId[]>(() => {
     const saved = localStorage.getItem("footerTabs");
     if (saved) return JSON.parse(saved);
     return ['inicio', 'indicacoes', 'seguranca', 'perfil', ...(isAdmin ? ['adm'] : [])];
   });
-  const [agendaView, setAgendaView] = useState<'list' | 'grid'>('list');
 
   const userName = "Alex Silva";
 
@@ -106,7 +113,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                 label="Consultor" 
                 value="15%" unit="Comissão" 
                 isAtivo={true}
-                onClick={() => setActiveTab('consultor')} 
+                onClick={() => setShowConsultantModal(true)} 
               />
             </div>
           </div>
@@ -222,7 +229,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               <div className="grid grid-cols-1 gap-4">
                 {[
                   { label: 'Alterar Dados / KYC', icon: UserCheck, action: () => setShowProfileModal(true) },
-                  { label: 'Segurança', icon: Shield, action: () => setActiveTab('seguranca') },
+                  { label: 'Segurança', icon: Shield, action: () => setShowSecurityModal(true) },
                   { label: 'Sair da Conta', icon: LogOut, action: onLogout, color: 'text-red-500' },
                 ].map((item, idx) => (
                   <button key={idx} onClick={item.action} className="flex items-center justify-between p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors">
@@ -250,7 +257,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
                   </div>
                   <CheckCircle2 className="w-6 h-6 text-green-500" />
                 </div>
-                <button className="w-full py-4 bg-[#004e3a] text-white rounded-2xl font-black">Alterar Senha</button>
+                <button onClick={() => setShowSecurityModal(true)} className="w-full py-4 bg-[#004e3a] text-white rounded-2xl font-black">Configurações Avançadas</button>
               </div>
             </div>
           </motion.div>
@@ -262,7 +269,7 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-950' : 'bg-[#f8faf9]'} transition-colors duration-500`}>
-      {/* Top Navbar com Saldos e Avatar */}
+      {/* Top Navbar */}
       <nav className="fixed top-0 left-0 right-0 h-24 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 z-[100] px-6 lg:px-12 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-[#009865] rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
@@ -274,7 +281,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         <div className="flex items-center gap-4 lg:gap-8">
           {/* Saldos */}
           <div className="flex items-center gap-3">
-            {/* Moedas Internas - Ocultável */}
             <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-full border border-yellow-100 dark:border-yellow-800">
               <Wallet className="w-4 h-4 text-yellow-600" />
               <span className="text-sm font-black text-yellow-700 dark:text-yellow-400">
@@ -285,7 +291,6 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
               </button>
             </div>
 
-            {/* Energia Gerada - Embaçado/CTA */}
             <button 
               onClick={() => setShowGenModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-100 dark:border-green-800 hover:scale-105 transition-transform"
@@ -297,14 +302,14 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
             </button>
           </div>
 
-          {/* Avatar com Menu Dropdown */}
+          {/* Avatar */}
           <div className="relative group">
             <button className="w-12 h-12 rounded-full border-2 border-[#009865] p-0.5 overflow-hidden">
               <img src="https://i.pravatar.cc/150?u=alex" alt="Avatar" className="w-full h-full rounded-full object-cover" />
             </button>
             <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2">
               <button onClick={() => setShowProfileModal(true)} className="w-full px-4 py-2 text-left text-xs font-black text-[#004e3a] dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 flex items-center gap-2">
-                <Edit3 className="w-4 h-4" /> Alterar Dados
+                <Edit3 className="w-4 h-4" /> Perfil / KYC
               </button>
               <button onClick={onLogout} className="w-full px-4 py-2 text-left text-xs font-black text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
                 <LogOut className="w-4 h-4" /> Sair da Conta
@@ -337,64 +342,22 @@ export default function MainDashboard({ onLogout, theme, toggleTheme, onOpenCons
         ))}
       </div>
 
-      {/* Modais */}
-      <GenerationModal isOpen={showGenModal} onClose={() => setShowGenModal(false)} />
+      {/* Modais Unificados */}
+      <GenerationModal 
+        isOpen={showGenModal} 
+        onClose={() => setShowGenModal(false)} 
+        isAtivo={usinaAtiva}
+        onActivate={() => {
+          setUsinaAtiva(true);
+          setActiveTab('seguranca');
+          setShowSecurityModal(true);
+        }}
+      />
       <ConsumptionModal isOpen={showConsModal} onClose={() => setShowConsModal(false)} />
       <PrivatePlantModal isOpen={showPrivatePlantModal} onClose={() => setShowPrivatePlantModal(false)} />
-
-      {/* Perfil / KYC Modal */}
-      <AnimatePresence>
-        {showProfileModal && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={() => setShowProfileModal(false)}>
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-[3rem] w-full max-w-lg p-10 relative shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button onClick={() => setShowProfileModal(false)} className="absolute top-8 right-8 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"><X className="w-6 h-6 text-gray-400" /></button>
-              
-              <div className="text-center mb-8">
-                <div className="relative w-24 h-24 mx-auto mb-4 group">
-                  <img src="https://i.pravatar.cc/150?u=alex" alt="Avatar" className="w-full h-full object-cover border-4 border-[#009865]" />
-                  <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                    <CameraIcon className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h2 className="text-2xl font-black text-[#004e3a] dark:text-white">Alterar Dados</h2>
-                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Verificação KYC em {kycStatus === 'pending' ? 'Pendente' : 'Concluída'}</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-gray-400 uppercase ml-4">Nome Completo</label>
-                  <input type="text" defaultValue={userName} className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-2xl font-bold dark:text-white outline-none focus:ring-2 ring-[#009865]" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-gray-400 uppercase ml-4">E-mail</label>
-                  <input type="email" defaultValue="alex.silva@email.com" className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-2xl font-bold dark:text-white outline-none focus:ring-2 ring-[#009865]" />
-                </div>
-                
-                {kycStatus === 'pending' && (
-                  <div className="p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-3xl border border-yellow-100 dark:border-yellow-800">
-                    <div className="flex items-center gap-4 mb-4">
-                      <Shield className="w-8 h-8 text-yellow-600" />
-                      <div>
-                        <p className="font-black text-yellow-700 dark:text-yellow-400">Verificação KYC</p>
-                        <p className="text-xs text-yellow-600/70 font-bold uppercase">Envie seus documentos</p>
-                      </div>
-                    </div>
-                    <button onClick={() => setKycStatus('completed')} className="w-full py-3 bg-yellow-600 text-white rounded-xl font-black text-xs uppercase flex items-center justify-center gap-2">
-                      <Camera className="w-4 h-4" /> Enviar Documentos
-                    </button>
-                  </div>
-                )}
-                
-                <button className="w-full py-5 bg-[#004e3a] text-white rounded-[2rem] font-black text-sm uppercase shadow-xl shadow-green-900/20">Salvar Alterações</button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
+      <SecurityModal isOpen={showSecurityModal} onClose={() => setShowSecurityModal(false)} />
+      <ConsultantModal isOpen={showConsultantModal} onClose={() => setShowConsultantModal(false)} />
     </div>
   );
 }
