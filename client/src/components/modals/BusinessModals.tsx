@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, CheckCircle2, Calculator, Zap, TrendingUp, Shield, Award, Sparkles, ArrowRight } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, CheckCircle2, Calculator, Zap, TrendingUp, Shield, Award, Sparkles, ArrowRight, Tool } from 'lucide-react';
 import { solarCalculator } from '@/lib/solarCalculator';
 
 interface BusinessModalProps {
