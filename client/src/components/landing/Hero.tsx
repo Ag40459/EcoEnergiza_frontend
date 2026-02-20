@@ -44,7 +44,7 @@ export default function Hero({ onStart }: HeroProps) {
   return (
     <section
       id="inicio"
-      className="w-full min-h-screen flex items-center justify-center p-6 lg:p-20 overflow-hidden relative pt-24 md:pt-32 pb-12"
+      className="w-full h-full flex items-center justify-center p-6 lg:p-20 overflow-hidden relative"
       style={{
         background: coresGradiente[corIndex],
         transition: "background 3s ease-in-out",

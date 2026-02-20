@@ -70,14 +70,14 @@ export default function Home() {
   }
 
   return (
-    <div className={`min-h-screen w-full flex flex-col relative ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+    <div className={`h-full w-full flex flex-col relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <Navbar 
         onOpenLogin={() => abrirLogin("email")} 
         theme={theme} 
         toggleTheme={toggleTheme} 
       />
       
-      <main className="flex-1 pt-20">
+      <main className="flex-1 overflow-hidden">
         <Hero onStart={() => abrirLogin("email")} />
       </main>
 
