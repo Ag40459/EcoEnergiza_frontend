@@ -106,9 +106,9 @@ export default function AICopilot({ theme = 'light', isConsultant = false }: AIC
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Alguma Dúvida Sobre Nossa Plataforma"
-              className="flex-1 bg-transparent border-none outline-none pl-6 pr-16 py-3 text-sm font-bold text-[#004e3a] dark:text-white placeholder:text-gray-400"
-            />
+	              placeholder="Como Posso Te Ajudar?"
+	              className="flex-1 bg-transparent border-none outline-none pl-16 pr-16 py-3 text-sm font-bold text-[#004e3a] dark:text-white placeholder:text-gray-400"
+	            />
             
             {/* Send Button (at the original position of the icon) */}
             <button
