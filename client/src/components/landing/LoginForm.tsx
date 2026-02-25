@@ -94,6 +94,12 @@ export default function LoginForm({ initialStep, onClose, onLoginSuccess, onOpen
   };
 
   const handleLoginFinal = () => {
+    const enteredCode = code.join("");
+    if (enteredCode !== "0001") {
+      alert("Código incorreto. Use 0001 para acessar.");
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
